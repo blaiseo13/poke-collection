@@ -231,6 +231,9 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .boxrow{display:flex;gap:6px}.boxrow .ghost:first-child{flex:1}.boxrow .ghost{color:#92400E;border-color:#FDE68A}
 .stage .wc.inbox::before{content:"📦 IN BOX";position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);background:var(--amber);color:#fff;font:800 10px Inter;letter-spacing:.06em;padding:3px 9px;border-radius:99px;z-index:2}
 #fileBtn.linked{color:var(--green);border-color:#A7F3D0}
+/* view-only dashboard: all edits happen in the Pokédex Binder page (the main record) */
+.viewonly .acts,.viewonly #ripBtn,.viewonly #mineBtn,.viewonly #revBtn,.viewonly #missBtn,.viewonly .boxrow,.viewonly .gotit,.viewonly .boxsearch{display:none!important}
+.editlink{text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .pstate{font-size:11px;color:var(--text3);font-weight:600;white-space:nowrap;align-self:center}
 .kpis.six{grid-template-columns:repeat(6,1fr)}
 .kpis.six .val{font-size:24px}
@@ -342,7 +345,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body>
+<body class="viewonly">
 <div class="bgballs" id="bgballs"></div>
 <header>
   <div class="hwrap">
@@ -354,10 +357,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
     </div>
     <div class="hbtns">
       <button class="primary" id="ripBtn">🎴 Rip a pack</button>
-      <button class="ghost" id="fileBtn">Link save file</button>
-      <button class="ghost" id="exportBtn" title="Save a backup file of your collection">Back up</button>
-      <button class="ghost" id="importBtn" title="Load a backup file">Restore</button>
-      <input type="file" id="importFile" accept=".json" hidden>
+      <a class="primary editlink" id="editLink" href="https://claude.ai/artifact/WykFENqw79CJXP145FWu3N" target="_blank" rel="noopener" title="Add, scan, file, rename and box cards in your Pokédex Binder">✏️ Edit binder</a>
     </div>
   </div>
 </header>
@@ -834,12 +834,12 @@ function toast(text, color) { const t = document.createElement('div'); t.classNa
 function pokeWiggle() { const b = $('#logoBall'); b.classList.remove('wiggle'); void b.offsetWidth; b.classList.add('wiggle'); }
 
 /* ---------- backup / restore ---------- */
-$('#exportBtn').onclick = () => { const d = new Date(), stamp = `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getFullYear()).slice(2)}`;
+if ($('#exportBtn')) $('#exportBtn').onclick = () => { const d = new Date(), stamp = `${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}-${String(d.getFullYear()).slice(2)}`;
   const out = { owned: Object.fromEntries(Object.entries(S.owned).map(([k,o]) => [k, { tier: TIERS[o.t].k, card: o.c }])), toFile: Object.keys(S.toFile).map(Number), box: S.box, saved: stamp };
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' }));
   a.download = `poke-collection-${stamp}.json`; a.click(); toast('Backup saved', '#059669'); };
-$('#importBtn').onclick = () => $('#importFile').click();
-$('#importFile').onchange = async e => { const f = e.target.files[0]; if (!f) return;
+if ($('#importBtn')) $('#importBtn').onclick = () => $('#importFile').click();
+if ($('#importFile')) $('#importFile').onchange = async e => { const f = e.target.files[0]; if (!f) return;
   try { const j = JSON.parse(await f.text()); const own = {}, tix = k => Math.max(0, TIERS.findIndex(t => t.k === k));
     if (Array.isArray(j.binder)) j.binder.forEach(b => { if (b.dex) own[b.dex] = { t: tix(b.form), c: b.card || null, at: Date.now() }; }); // linked save file (my-binder.json)
     else Object.entries(j.owned || {}).forEach(([k,v]) => { own[k] = { t: tix(v.tier || v), c: v.card || null, at: Date.now() }; }); // Back up file

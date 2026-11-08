@@ -28,7 +28,7 @@ const r2 = x => Math.round(x * 100) / 100;
   const all = [];
   for (const s of sets) {
     const cards = await pool(s.cards, 10, c => get(`${API}/cards/${c.id}`));
-    const rows = cards.filter(Boolean).map(c => {
+    let rows = cards.filter(Boolean).map(c => {
       const tp = c.pricing && c.pricing.tcgplayer, cm = c.pricing && c.pricing.cardmarket;
       let usd = 0, variant = '';
       if (tp) for (const [k, v] of Object.entries(tp)) if (v && typeof v === 'object' && (v.marketPrice || 0) > usd) { usd = v.marketPrice; variant = k; }
@@ -37,7 +37,9 @@ const r2 = x => Math.round(x * 100) / 100;
         img: c.image || '', usd: r2(usd), v: variant.replace(/-/g, ' '),
         t: a7 && a30 ? Math.round((a7 / a30 - 1) * 1000) / 1000 : null, e1: a1 || null, e7: a7 || null, e30: a30 || null,
         set: s.name, sid: s.id };
-    }).filter(x => x.usd > 0);
+    });
+    s.allRows = rows.slice();
+    rows = rows.filter(x => x.usd > 0);
     rows.sort((a, b) => b.usd - a.usd);
     s.top = rows.slice(0, 12);
     all.push(...rows);
@@ -51,6 +53,14 @@ const r2 = x => Math.round(x * 100) / 100;
     sets: sets.map(s => ({ id: s.id, name: s.name, date: s.releaseDate, logo: s.logo || '', top: s.top })),
     gains, drops
   };
+  // every card of every pack (for the Packs tab): [number, name, rarity, image, usd, trend, dex, category]
+  const packs = { asOf: today, sets: sets.map(s => ({ id: s.id, name: s.name, date: s.releaseDate, logo: s.logo || '', count: s.cardCount ? s.cardCount.official || s.cardCount.total : 0,
+    cards: (s.allRows || []).sort((a, b) => (parseInt(a.num) || 9999) - (parseInt(b.num) || 9999) || String(a.num).localeCompare(String(b.num)))
+      .map(c => [c.num, c.n, c.r, c.img, c.usd, c.t, c.dex, c.cat === 'Pokemon' ? 'P' : c.cat === 'Trainer' ? 'T' : 'E']) })) };
+  fs.writeFileSync(path.join(__dirname, '..', 'data', 'packs.js'), `// Built ${today} by tools/trending.js (every card of each in-print set; TCGplayer market USD)
+window.PK_PACKS = ${JSON.stringify(packs)};
+`);
+  console.log('packs:', packs.sets.reduce((a, s) => a + s.cards.length, 0), 'cards');
   const file = path.join(__dirname, '..', 'data', 'trending.js');
   fs.writeFileSync(file, `// Built ${today} by tools/trending.js (TCGdex: TCGplayer market USD; momentum = Cardmarket 7-day vs 30-day avg)\nwindow.PK_TREND = ${JSON.stringify(out)};\n`);
   console.log('wrote', file, 'sets', out.sets.length, 'gains', gains.length, 'drops', drops.length);

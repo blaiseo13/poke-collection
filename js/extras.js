@@ -159,7 +159,7 @@ function apply(pulls) {
   k.save(); k.renderGrid(); if (toBinder.length) k.shower();
   $('#ripBody').innerHTML = `<div class="ripdone">
     <h3>📒 Put these in your binder (${toBinder.length})</h3>${toBinder.length ? `<ul>${toBinder.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '<div class="muted">Nothing new this time.</div>'}
-    <h3>📦 These go to the box (${toBox.length})</h3>${toBox.length ? `<ul>${toBox.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '<div class="muted">No dupes.</div>'}
+    <h3>🔁 Extra copies (${toBox.length})</h3>${toBox.length ? `<ul>${toBox.map(t => `<li>${esc(t)}</li>`).join('')}</ul>` : '<div class="muted">No dupes.</div>'}
     <div class="muted small">Binder cards are tagged TO FILE until you press 📁 on them.</div>
     <button class="primary" id="ripAgain">Rip another pack</button></div>`;
   $('#ripAgain').onclick = openRip;

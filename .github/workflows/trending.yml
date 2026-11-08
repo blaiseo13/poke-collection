@@ -18,9 +18,9 @@ jobs:
         run: node tools/trending.js
       - name: Commit if changed
         run: |
-          if git diff --quiet -- data/trending.js; then echo "no change"; exit 0; fi
+          if git diff --quiet -- data/trending.js data/packs.js; then echo "no change"; exit 0; fi
           git config user.name "trending-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/trending.js
+          git add data/trending.js data/packs.js
           git commit -m "Daily trending prices"
           git push

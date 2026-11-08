@@ -185,7 +185,7 @@ const PKX = window.PKX = {
     d && (d.onclick = () => { const i = K().S.box.findIndex(b => b.id === c.id); removeFromBox(i); K().wheelRefresh(); K().refreshTile(sp.dex); });
   },
   inBox: id => K().S.box.some(b => b.id === id),
-  render(v) { if (v === 'stats') renderStats(); if (v === 'box') renderBox(); if (v === 'need') window.PKY && PKY.renderNeed(); if (v === 'trend') window.PKT && PKT.render(); },
+  render(v) { if (v === 'stats') renderStats(); if (v === 'box') renderBox(); if (v === 'need') window.PKY && PKY.renderNeed(); if (v === 'trend') window.PKT && PKT.render(); if (v === 'packs') window.PKP && PKP.render(); },
   start() { initFile(); setPriceState(); updatePills(); refreshAll(); setInterval(() => { if (!busy) refreshAll(); }, 6 * 36e5); }
 };
 
@@ -263,7 +263,7 @@ function renderStats() {
     <div class="kpis six">
       ${tile('Binder value', t.conf + t.est, 'money', t.nEst ? `${money(t.conf)} picked · ~${money(t.est)} estimate for ${t.nEst} unpicked` : `${t.nConf} cards priced`, '#059669')}
       ${tile('Printings picked', picked.length, '', `of ${n} cards in your binder`, '#4F46E5')}
-      ${tile('Downstairs box', S.box.length, '', `${money(t.box)} market value${upgrades ? ` · ${upgrades} upgrade${upgrades > 1 ? 's' : ''} waiting` : ''}`, '#D97706')}
+      ${tile('Big hits', owned.filter(r => r.o.t >= 4).length, '', 'Ultra Rare or better in this binder', '#D97706')}
       ${tile('Binder pages', Math.ceil(n / 9), '', '9-pocket pages, front only', '#0EA5E9')}
       ${tile('Total HP', hp, '', `avg ${n ? Math.round(hp / n) : 0} per card`, '#DC2626')}
       ${tile('To file', Object.keys(S.toFile).length, '', 'waiting for the binder', '#6B7280')}

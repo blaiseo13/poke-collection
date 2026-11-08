@@ -650,6 +650,64 @@ body.quick .quickbar{display:flex}
 .grid.quick .qt.pop{animation:qpop .28s cubic-bezier(.2,1.6,.4,1)}
 @keyframes qpop{50%{transform:scale(1.08)}}
 @media (max-width:760px){.grid.quick{grid-template-columns:repeat(4,1fr);gap:6px}.grid.quick .qt img{width:54px;height:54px}}
+
+/* ---------- Packs tab ---------- */
+.packhero{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;background:linear-gradient(120deg,#EEF2FF,#FDF2F8 60%,#FFFBEB);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin:4px 0 6px}
+.plogo{height:56px;max-width:150px;object-fit:contain}
+.ph-t h2{margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.ph-stats{display:flex;gap:18px}.ph-stats div{display:grid;text-align:right}.ph-stats small{font:700 10px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}.ph-stats b{font:800 20px Inter;font-variant-numeric:tabular-nums}
+.hits{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.hit{display:grid;gap:8px;cursor:pointer;transition:transform .15s}
+.hit:hover{transform:translateY(-3px)}
+.hitimg{position:relative;aspect-ratio:245/342;border-radius:10px;overflow:hidden;background:#EEF0F3;box-shadow:0 0 0 2px var(--hc),0 8px 22px color-mix(in srgb,var(--hc) 35%,transparent)}
+.hitimg img{width:100%;height:100%;object-fit:cover;display:block}
+.hit.h5 .hitimg{box-shadow:0 0 0 3px #F5C04A,0 0 26px rgba(245,192,74,.55)}
+.hsheen{position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.55) 48%,transparent 60%);background-size:250% 100%;animation:goldSweep 3.2s ease-in-out infinite;mix-blend-mode:overlay;pointer-events:none}
+.hit:not(.h5) .hsheen{display:none}
+.hrank{position:absolute;left:6px;top:6px;font:800 11px Inter;color:#fff;background:var(--hc);border-radius:99px;padding:3px 8px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.hitt{display:grid;gap:2px;min-width:0}.hitt b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hitt small{font-size:11px;color:var(--text3);text-transform:capitalize;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hitp{display:flex;gap:6px;align-items:center;margin:2px 0}.hitp b{font:800 18px Inter;color:var(--green)}
+.hitt .pill{justify-self:start;font-size:9px}
+.packbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 12px}
+.allcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:12px}
+.pc2{display:grid;gap:4px;cursor:pointer;border-radius:10px;padding:6px;transition:background .15s}
+.pc2:hover{background:#F3F4F6}
+.pcimg{position:relative;aspect-ratio:245/342;border-radius:7px;overflow:hidden;background:#EEF0F3;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.pcimg img{width:100%;height:100%;object-fit:cover;display:block}
+.pc2.hh3 .pcimg,.pc2.hh4 .pcimg,.pc2.hh5 .pcimg{box-shadow:0 0 0 2px var(--hc),0 4px 12px color-mix(in srgb,var(--hc) 35%,transparent)}
+.noimg{background:linear-gradient(160deg,#EEF2FF,#FDF2F8)!important;border:2px dashed #C7D2FE}
+.hitimg .ph,.pcimg .ph{display:none}
+.noimg .ph{position:absolute;inset:0;display:grid!important;place-items:center;align-content:center;gap:4px;padding:8px;text-align:center}
+.noimg .ph img{width:80%;height:auto;object-fit:contain}
+.noimg .ph small{font-size:10px;color:var(--text3)}.noimg .ph b{font-size:11px;color:var(--text2)}
+.pnum{position:absolute;right:4px;bottom:4px;font:800 10px ui-monospace,Consolas,monospace;color:#fff;background:rgba(17,24,39,.8);border-radius:5px;padding:1px 5px}
+.pcn{display:grid;min-width:0}.pcn b{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pcn small{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:capitalize}
+.pcp{display:flex;gap:4px;align-items:center;justify-content:space-between}.pcp b{font:800 13px Inter;font-variant-numeric:tabular-nums}.pcp .pill{font-size:8px;padding:2px 5px}
+/* big card view */
+.lb{position:fixed;inset:0;z-index:55;display:none;background:rgba(17,24,39,.72);backdrop-filter:blur(6px);padding:20px max(16px,env(safe-area-inset-left,0px))}
+.lb.on{display:grid;place-items:center;animation:fade .2s}
+.lbin{position:relative;display:grid;grid-template-columns:minmax(0,360px) minmax(0,300px);gap:28px;align-items:center;animation:zoomIn .35s cubic-bezier(.2,1.2,.4,1)}
+.lbx{position:absolute;right:-6px;top:-44px;background:#fff!important}
+.lbcard{position:relative;aspect-ratio:245/342;border-radius:16px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.45),0 0 0 3px var(--hc);transition:transform .1s linear;max-height:78vh}
+.lbcard.h5{box-shadow:0 30px 60px rgba(0,0,0,.45),0 0 0 4px #F5C04A,0 0 50px rgba(245,192,74,.6)}
+.lbcard img{width:100%;height:100%;object-fit:cover;display:block}
+.lbshine{position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) 30%,rgba(255,255,255,.35),transparent 45%);mix-blend-mode:overlay;pointer-events:none}
+.lbph{height:100%;display:grid;place-items:center;background:#EEF2FF;color:var(--text3);font-weight:700}
+.lbinfo{background:#fff;border-radius:16px;padding:20px;display:grid;gap:10px}
+.lbinfo h2{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.lbr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rpill{color:#fff;font:800 11px Inter;text-transform:capitalize;border-radius:99px;padding:3px 10px}
+.lbp{display:grid}.lbp small{font:700 10px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--text3)}.lbp b{font:800 32px Inter;color:var(--green);letter-spacing:-.02em}
+.lbp .tr{justify-self:start}
+@media (max-width:760px){
+  .packhero{grid-template-columns:1fr;gap:10px;text-align:left}.plogo{height:44px}.ph-stats{justify-content:space-between}.ph-stats div{text-align:left}
+  .hits{grid-template-columns:repeat(2,1fr);gap:12px}
+  .allcards{grid-template-columns:repeat(3,1fr);gap:8px}.pc2{padding:3px}
+  .lbin{grid-template-columns:1fr;gap:14px;width:100%;max-height:92dvh;overflow:auto}
+  .lbcard{width:min(78vw,340px);justify-self:center}.lbx{right:4px;top:4px;z-index:2}
+}
+/* Box is gone from the screens (data kept, hidden) */
+.boxchip,.boxrow{display:none!important}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -670,7 +728,7 @@ body.quick .quickbar{display:flex}
     </div>
   </div>
 </header>
-<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="trend"><span class="ic">🔥</span><span class="tx">Trending</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="box"><span class="ic">📦</span><span class="tx">Box</span></button></nav>
+<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="trend"><span class="ic">🔥</span><span class="tx">Trending</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="packs"><span class="ic">🎁</span><span class="tx">Packs</span></button></nav>
 
 <main>
   <section class="view on" id="v-collection">
@@ -700,6 +758,7 @@ body.quick .quickbar{display:flex}
   <section class="view" id="v-trend"></section>
   <section class="view" id="v-stats"></section>
   <section class="view" id="v-box"></section>
+  <section class="view" id="v-packs"></section>
 
   <section class="view" id="v-completion">
     <div class="comp-top">
@@ -748,10 +807,10 @@ body.quick .quickbar{display:flex}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=20"></script>
-<script src="data/my-collection.js?v=20"></script>
-<script src="data/sync.js?v=20"></script>
-<script src="js/binder.js?v=20"></script>
+<script src="data/cards.js?v=22"></script>
+<script src="data/my-collection.js?v=22"></script>
+<script src="data/sync.js?v=22"></script>
+<script src="js/binder.js?v=22"></script>
 <script>
 (() => {
 'use strict';
@@ -1331,13 +1390,14 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=20"></script>
-<script src="data/trending.js?v=20"></script>
-<script src="js/trending.js?v=20"></script>
+<script src="js/extras.js?v=22"></script>
+<script src="data/trending.js?v=22"></script>
+<script src="js/trending.js?v=22"></script>
+<script src="js/packs.js?v=22"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=20"></script>
-<script src="js/cloud.js?v=20"></script>
+<script src="data/firebase-config.js?v=22"></script>
+<script src="js/cloud.js?v=22"></script>
 </body>
 </html>

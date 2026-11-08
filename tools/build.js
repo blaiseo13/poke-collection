@@ -2,7 +2,7 @@ const fs=require('fs'),path=require('path');
 const [src,speciesFile,out,tdFile]=process.argv.slice(2);
 const TD=tdFile?JSON.parse(fs.readFileSync(tdFile)):{};const tdSet={};Object.entries(TD).forEach(([k,v])=>{const s=k.split('|')[0];if(!tdSet[s])tdSet[s]=v.slice(0,v.lastIndexOf('-'))});
 const sets=JSON.parse(fs.readFileSync(path.join(src,'sets/en.json')));
-const setIdx={};const S=sets.map((s,i)=>{setIdx[s.id]=i;return [s.id,s.name,s.series,s.releaseDate.replace(/\//g,'-'),tdSet[s.id]||'']});
+const setIdx={};const S=sets.map((s,i)=>{setIdx[s.id]=i;return [s.id,s.name,s.series,s.releaseDate.replace(/\//g,'-'),tdSet[s.id]||'',s.printedTotal||0]});
 const RAR={};const R=[];const ri=r=>{r=r||'Common';if(!(r in RAR)){RAR[r]=R.length;R.push(r)}return RAR[r]};
 const TYPES=['Grass','Fire','Water','Lightning','Psychic','Fighting','Darkness','Metal','Fairy','Dragon','Colorless'];
 const C=[];const byDex={};let badImg=0;

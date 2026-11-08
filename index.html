@@ -79,7 +79,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .gen-h::after{content:"";flex:1;height:1px;background:var(--border)}
 .gen-h b{color:var(--text)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:20px 16px}
-.tile{content-visibility:auto;contain-intrinsic-size:172px 320px;animation:pop .45s cubic-bezier(.2,1.2,.4,1) backwards;animation-delay:var(--dl,0ms)}
+.tile{content-visibility:auto;contain-intrinsic-size:auto 320px;animation:pop .45s cubic-bezier(.2,1.2,.4,1) backwards;animation-delay:var(--dl,0ms)}
 @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.94)}to{opacity:1;transform:none}}
 .card3d{position:relative;aspect-ratio:245/342;border-radius:9px;transform-style:preserve-3d;cursor:pointer;
   transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease,box-shadow .25s,filter .6s;
@@ -240,7 +240,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .stage .wc.inbox::before{content:"📦 IN BOX";position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);background:var(--amber);color:#fff;font:800 10px Inter;letter-spacing:.06em;padding:3px 9px;border-radius:99px;z-index:2}
 #fileBtn.linked{color:var(--green);border-color:#A7F3D0}
 /* view-only dashboard: all edits happen in the Pokédex Binder page (the main record) */
-.viewonly .acts,.viewonly #ripBtn,.viewonly #mineBtn,.viewonly #revBtn,.viewonly #missBtn,.viewonly .boxrow,.viewonly .gotit,.viewonly .boxsearch{display:none!important}
+.viewonly .acts,.viewonly #ripBtn,.viewonly #mineBtn,.viewonly #revBtn,.viewonly #missBtn,.viewonly .boxrow,.viewonly .gotit,.viewonly #v-box .boxsearch{display:none!important}
 .phonelink{text-decoration:none;white-space:nowrap}
 @media (max-width:760px){.phonelink{display:none}}
 .editlink{text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
@@ -310,7 +310,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .ng b{font-size:20px;font-weight:800;position:relative;z-index:1}.ng span{font-size:11px;color:var(--text2);font-weight:600;position:relative;z-index:1}
 .ng i{position:absolute;left:0;right:0;bottom:0;height:var(--h);background:linear-gradient(#FEE2E2,#FECACA);transition:height .8s}
 .needgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
-.needc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);animation:pop .4s cubic-bezier(.2,1.2,.4,1) backwards;animation-delay:var(--dl);transition:transform .15s,box-shadow .15s}
+.needc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s,box-shadow .15s}
 .needc:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(0,0,0,.1)}
 .needc.w{border-color:#FCD34D;background:linear-gradient(#FFFBEB,#fff 40%)}
 .needc img{width:100%;border-radius:6px;cursor:pointer;display:block}
@@ -350,6 +350,37 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .setrow .sv{text-align:right;font-weight:700}.setrow .sv small{display:block;color:var(--text3);font-weight:500}
 .sgrid .span3{grid-column:1/-1}
 @media (max-width:900px){.needhead{grid-template-columns:1fr}.needgens{grid-template-columns:repeat(5,1fr)}.setrow{grid-template-columns:70px 1fr 90px}.setrow .hbt{display:none}}
+
+/* ---------- need: do-I-need-it check ---------- */
+.needcheck{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:18px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.needcheck .lab{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text2)}
+.needcheck input{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:1px solid var(--border);border-radius:10px;margin-top:6px;background:#fff}
+.needcheck input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px rgba(79,70,229,.15)}
+.anslist{display:grid;gap:8px;margin-top:12px}
+.ansrow{display:flex;gap:12px;align-items:center;text-align:left;background:#F9FAFB;border:1px solid var(--border);border-radius:10px;padding:8px 10px;font:inherit;color:inherit;cursor:pointer}
+.ansrow:hover{border-color:var(--accent)}
+.ansrow img{width:44px;border-radius:4px;flex:none}
+.ans{display:inline-block;font-weight:800;font-size:13px;margin-top:2px}
+.ans.have{color:var(--green)}.ans.need{color:var(--red)}
+.ansrow small{display:block;color:var(--text3);font-size:12px}
+.grid.noanim .tile{animation:none}
+/* ---------- phone layout ---------- */
+@media (max-width:760px){
+  .hwrap{gap:10px;padding:10px 16px}
+  .logo{font-size:18px}
+  .tabs{order:3;width:100%;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:none}
+  .search{order:4;flex-basis:100%;max-width:none}
+  .search input{font-size:16px}
+  .search kbd,.hbtns{display:none}
+  .mbox{width:100vw;height:100dvh;border-radius:0}
+  .stage{min-height:330px}
+  .stage .wc{width:180px;margin-left:-90px;margin-top:-126px}
+  .info{max-height:42vh}
+  .arrow{display:none}
+  select{font-size:16px}
+}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -368,7 +399,6 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
     <div class="hbtns">
       <button class="primary" id="ripBtn">🎴 Rip a pack</button>
       <a class="ghost phonelink" href="open-on-phone.html" target="_blank" rel="noopener" title="QR codes to open this on your phone">📱 Open on phone</a>
-      <a class="primary editlink" id="editLink" href="https://claude.ai/artifact/WykFENqw79CJXP145FWu3N" target="_blank" rel="noopener" title="Add, scan, file, rename and box cards in your Pokédex Binder">✏️ Edit binder</a>
     </div>
   </div>
 </header>
@@ -446,10 +476,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=5"></script>
-<script src="data/my-collection.js?v=5"></script>
-<script src="data/sync.js?v=5"></script>
-<script src="js/binder.js?v=5"></script>
+<script src="data/cards.js?v=8"></script>
+<script src="data/my-collection.js?v=8"></script>
+<script src="data/sync.js?v=8"></script>
+<script src="js/binder.js?v=8"></script>
 <script>
 (() => {
 'use strict';
@@ -577,11 +607,22 @@ const UI = { gen: -1, show: 'all', tier: -1, sort: 'dex', q: '' };
 
 /* ---------- tabs ---------- */
 function placePill() { const on = $('#tabs button.on'), p = $('#tabs .pill'); p.style.left = on.offsetLeft + 'px'; p.style.width = on.offsetWidth + 'px'; }
-$('#tabs').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
-  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + b.dataset.v));
-  placePill(); if (b.dataset.v === 'completion') renderCompletion(); else if (b.dataset.v === 'collection') renderKpis(); else window.PKX && PKX.render(b.dataset.v);
+// each tab is a history step (phone back button works) and keeps its own scroll spot
+const scrollMem = {};
+const curView = () => { const on = $('#tabs button.on'); return on ? on.dataset.v : 'collection'; };
+function showView(v, push) {
+  if (!$(`#tabs button[data-v="${v}"]`)) v = 'collection';
+  scrollMem[curView()] = window.scrollY;
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x.dataset.v === v));
+  document.querySelectorAll('.view').forEach(el => el.classList.toggle('on', el.id === 'v-' + v));
+  placePill(); if (v === 'completion') renderCompletion(); else if (v === 'collection') renderKpis(); else window.PKX && PKX.render(v);
+  if (push && location.hash !== '#' + v) history.pushState({ v }, '', '#' + v);
+  requestAnimationFrame(() => window.scrollTo(0, scrollMem[v] || 0));
+}
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; showView(b.dataset.v, true); });
+window.addEventListener('popstate', () => {
+  if ($('#modal').classList.contains('on') && !(history.state && history.state.modal)) { hideWheel(); return; }
+  const v = (location.hash || '#collection').slice(1); if (v !== curView()) showView(v, false);
 });
 window.addEventListener('resize', placePill);
 
@@ -674,6 +715,7 @@ function renderGrid() {
       html += `<div class="gen-h" data-g="${sp.gen}"><b>Gen ${ROMAN[sp.gen]} · ${gg[2]}</b> ${own}/${tot}</div>`; }
     html += tileHTML(sp, idx++);
   });
+  g.classList.toggle('noanim', !!g.dataset.painted); g.dataset.painted = 1;
   g.innerHTML = html;
   renderKpis();
 }
@@ -695,6 +737,7 @@ sparkObs.observe($('#grid'), { childList: true });
 
 /* tilt + foil follow */
 $('#grid').addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
   const c = e.target.closest('.card3d'); if (!c) return; const r = c.getBoundingClientRect();
   const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
   c.style.setProperty('--ry', (x - .5) * 18 + 'deg'); c.style.setProperty('--rx', (.5 - y) * 18 + 'deg');
@@ -726,6 +769,7 @@ $('#grid').addEventListener('click', e => {
 /* ---------- wheel modal ---------- */
 const W = { sp: null, list: [], idx: 0, tf: -1, els: [] };
 function openWheel(sp) {
+  if (!(history.state && history.state.modal)) history.pushState({ modal: sp.dex, v: curView() }, '', location.hash || '#' + curView());
   W.sp = sp; W.tf = -1; $('#mName').textContent = sp.name; $('#mNum').textContent = '#' + String(sp.dex).padStart(3,'0');
   const o = ownedOf(sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   const counts = TIERS.map((_, i) => sp.cards.filter(c => c.tier === i).length);
@@ -787,7 +831,8 @@ function renderInfo() {
 }
 function afterChange() { const o = ownedOf(W.sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   go(W.idx); refreshTile(W.sp.dex, 'color'); renderKpis(); }
-function closeWheel() { $('#modal').classList.remove('on'); document.body.style.overflow = ''; }
+function hideWheel() { $('#modal').classList.remove('on'); document.body.style.overflow = ''; }
+function closeWheel() { if (history.state && history.state.modal) history.back(); else hideWheel(); }
 $('#mClose').onclick = closeWheel; $('#modal').onclick = e => { if (e.target.id === 'modal') closeWheel(); };
 $('#prev').onclick = () => go(W.idx - 1); $('#next').onclick = () => go(W.idx + 1);
 $('#wheelRange').oninput = e => go(+e.target.value);
@@ -862,15 +907,21 @@ if ($('#importFile')) $('#importFile').onchange = async e => { const f = e.targe
 
 $('#asof').textContent = '· Cards as of ' + fmtDate(D.sets.map(s => s[3]).sort().pop());
 // binder picker
-function fillBinderSel() { const sel = $('#binderSel'); sel.innerHTML = Object.entries(S.binders).map(([id, b]) => `<option value="${id}"${id === S.cur ? ' selected' : ''}>${b.name.replace(/[<&]/g, '')}</option>`).join(''); }
+const EDIT_URL = 'https://claude.ai/artifact/WykFENqw79CJXP145FWu3N';
+function fillBinderSel() { const sel = $('#binderSel'); sel.innerHTML = Object.entries(S.binders).map(([id, b]) => `<option value="${id}"${id === S.cur ? ' selected' : ''}>${b.name.replace(/[<&]/g, '')}</option>`).join('')
+  + '<option disabled>──────────</option><option value="__new">＋ New binder…</option><option value="__edit">✎ Rename or edit binders…</option>'; }
 fillBinderSel();
-$('#binderSel').onchange = e => { const b = S.binders[S.cur]; BKEYS.forEach(k => b[k] = S[k]); useBinder(e.target.value);
+$('#binderSel').onchange = e => {
+  if (e.target.value.startsWith('__')) { const hash = e.target.value === '__new' ? '#new-binder' : '#binders'; e.target.value = S.cur; window.open(EDIT_URL + hash, '_blank', 'noopener'); return; }
+  const b = S.binders[S.cur]; BKEYS.forEach(k => b[k] = S[k]); useBinder(e.target.value);
   WANT.clear(); (S.binders[S.cur].want || []).forEach(d => WANT.add(Number(d))); save(); renderGrid();
   const on = $('#tabs button.on'); if (on && on.dataset.v !== 'collection') on.click(); toast('Showing ' + S.binders[S.cur].name, '#4F46E5'); };
 window.PKC = { S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
-renderGrid(); placePill(); window.PKX && PKX.start(); document.fonts && document.fonts.ready.then(placePill);
+renderGrid(); placePill(); window.PKX && PKX.start();
+{ const v0 = (location.hash || '').slice(1); history.replaceState({ v: v0 || 'collection' }, ''); if (v0 && v0 !== 'collection') showView(v0, false); }
+ document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=5"></script>
+<script src="js/extras.js?v=8"></script>
 </body>
 </html>

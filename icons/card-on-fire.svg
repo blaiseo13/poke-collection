@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><style>@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+.ember{animation:rise 2.4s linear infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(-55px);opacity:0}}
+.flick{transform-origin:50px 85px;animation:flick .45s ease-in-out infinite alternate}
+.flick2{transform-origin:50px 85px;animation:flick .6s ease-in-out infinite alternate-reverse}
+@keyframes flick{0%{transform:scale(1,1) skewX(-3deg)}100%{transform:scale(1.04,1.1) skewX(3deg)}}
+.tilt{transform-origin:50px 52px;animation:tilt 3s ease-in-out infinite}
+@keyframes tilt{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(-2deg) translateY(-1.5px)}}
+.holo{animation:holo 2.6s ease-in-out infinite}
+@keyframes holo{0%,100%{transform:translateX(-40px)}50%{transform:translateX(40px)}}</style><defs>
+<radialGradient id="t1bg" cx="50%" cy="65%" r="75%"><stop offset="0" stop-color="#7C2D12"/><stop offset=".55" stop-color="#1C0A04"/><stop offset="1" stop-color="#050302"/></radialGradient>
+<linearGradient id="t1f" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFF7AE"/><stop offset=".25" stop-color="#FDE047"/><stop offset=".55" stop-color="#F97316"/><stop offset=".85" stop-color="#DC2626"/><stop offset="1" stop-color="#7F1D1D" stop-opacity="0"/></linearGradient>
+<filter id="t1t" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="0.035 0.09" numOctaves="3" seed="3" result="n"><animate attributeName="seed" dur="0.6s" values="1;2;3;4;5;6" repeatCount="indefinite" calcMode="discrete"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G"/></filter>
+<radialGradient id="t1m" cx="50%" cy="55%" r="60%"><stop offset=".55" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient><mask id="t1mk"><rect width="100" height="100" fill="url(#t1m)"/></mask>
+<linearGradient id="t1gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FEF3C7"/><stop offset=".5" stop-color="#F59E0B"/><stop offset="1" stop-color="#B45309"/></linearGradient>
+<linearGradient id="t1art" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#7C2D12"/></linearGradient>
+<linearGradient id="sh" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<clipPath id="t1c"><rect x="33" y="22" width="34" height="50" rx="4"/></clipPath>
+</defs><rect width="100" height="100" fill="url(#t1bg)"/>
+<g mask="url(#t1mk)"><g filter="url(#t1t)"><path class="flick" d="M10 112 C8 66 24 56 22 38 C30 48 32 32 38 20 C42 34 48 28 52 12 C56 28 64 24 64 36 C70 28 78 42 76 54 C84 48 92 70 90 112 Z" fill="url(#t1f)"/><path class="flick2" d="M24 112 C26 72 34 66 34 52 C40 60 44 48 48 38 C52 50 58 56 60 64 C64 60 72 72 76 112 Z" fill="#FDE047" opacity=".9"/></g></g>
+<g class="tilt"><rect x="31" y="20" width="38" height="54" rx="5" fill="url(#t1gold)"/><rect x="33" y="22" width="34" height="50" rx="4" fill="#1C0A04"/>
+<rect x="35.5" y="25" width="29" height="23" rx="2" fill="url(#t1art)"/>
+<path d="M50 28c3 4 7 7 5 13-1 4-5 5-5 5s-6-2-6-7c0-3 3-4 3-7 1 2 2 2 3-4z" fill="#FDE047"/>
+<rect x="35.5" y="51" width="29" height="2.4" rx="1" fill="#FCD34D" opacity=".85"/><rect x="35.5" y="56" width="22" height="2" rx="1" fill="#78350F"/><rect x="35.5" y="60" width="25" height="2" rx="1" fill="#78350F"/>
+<path d="M60 64l1.4 2.8 3 .4-2.2 2.1.5 3-2.7-1.4-2.7 1.4.5-3-2.2-2.1 3-.4z" fill="#FDE047"/>
+<g clip-path="url(#t1c)"><rect class="holo" x="38" y="15" width="14" height="70" fill="url(#sh)" transform="skewX(-16)"/></g></g>
+<g fill="#FDBA74"><circle class="ember" cx="26" cy="74" r=".9"/><circle class="ember" cx="74" cy="70" r="1" style="animation-delay:.7s"/><circle class="ember" cx="44" cy="44" r=".8" style="animation-delay:1.2s"/><circle class="ember" cx="62" cy="40" r=".7" style="animation-delay:1.8s"/></g>
+</svg>

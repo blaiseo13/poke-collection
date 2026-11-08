@@ -762,6 +762,19 @@ html,body{overflow-x:clip}
 .bgballs i{background:url(icons/emblem.svg) center/contain no-repeat!important;border:0!important;opacity:.07!important}
 .sales.alt{background:#fff;color:var(--text);border:1px solid var(--border);margin-left:6px}
 @media (prefers-reduced-motion:reduce){.emb .licks path,.emb .core{animation:none}}
+
+/* save button right on the wheel (no scrolling) */
+.stagebtns{position:absolute;left:50%;bottom:64px;transform:translateX(-50%);z-index:150;display:flex;gap:8px}
+.viewonly .stagebtns{display:none}
+.stagesave.coll{background:linear-gradient(135deg,#4F46E5,#6366F1);box-shadow:0 8px 22px rgba(79,70,229,.4)}
+.stagesave.coll.done{color:#3730A3;box-shadow:0 0 0 2px #C7D2FE,0 6px 16px rgba(0,0,0,.12)}
+.stagesave{position:relative;border:0;border-radius:99px;padding:11px 20px;font:800 14px Inter,system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#059669,#10B981);box-shadow:0 8px 22px rgba(5,150,105,.45);white-space:nowrap;transition:transform .15s,box-shadow .15s}
+.stagesave:hover{transform:translateY(-2px)}
+.stagesave:active{transform:scale(.96)}
+.stagesave:disabled{cursor:default;transform:none}
+.stagesave.done{background:#fff;color:#065F46;box-shadow:0 0 0 2px #A7F3D0,0 6px 16px rgba(0,0,0,.12)}
+.viewonly .stagesave{display:none}
+@media (max-width:760px){.stagebtns{bottom:56px;gap:6px}.stagesave{padding:10px 13px;font-size:12.5px}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -849,6 +862,7 @@ html,body{overflow-x:clip}
     <div class="mbody">
       <div class="stage" id="stage">
         <button class="arrow l" id="prev">‹</button><button class="arrow r" id="next">›</button>
+        <div class="stagebtns" id="stageBtns"><button class="stagesave coll" id="saveColl" type="button">＋ Save to collection</button><button class="stagesave" id="saveBinder" type="button">📒 Move to binder</button></div>
         <div class="wheelbar"><input type="range" id="wheelRange" min="0" max="0" value="0"></div>
         <div class="hint">Scroll, drag or use ← → to spin through every printing</div>
       </div>
@@ -861,10 +875,10 @@ html,body{overflow-x:clip}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=27"></script>
-<script src="data/my-collection.js?v=27"></script>
-<script src="data/sync.js?v=27"></script>
-<script src="js/binder.js?v=27"></script>
+<script src="data/cards.js?v=29"></script>
+<script src="data/my-collection.js?v=29"></script>
+<script src="data/sync.js?v=29"></script>
+<script src="js/binder.js?v=29"></script>
 <script>
 (() => {
 'use strict';
@@ -1214,6 +1228,24 @@ function buildWheel() {
     d.innerHTML = `<img alt="" draggable="false">`; d.onclick = () => { if (i !== W.idx) go(i); }; st.appendChild(d); return d; });
   $('#wheelRange').max = Math.max(0, W.list.length - 1); go(W.idx, true);
 }
+// two buttons on the wheel: this exact card is in my collection / in my binder
+function syncStageSave() {
+  const c = W.list[W.idx], bc = $('#saveColl'), bb = $('#saveBinder'); if (!c || !bc) return;
+  const own = ownedOf(W.sp.dex), isThis = own && own.c === c.id, inB = isThis && !S.toFile[W.sp.dex];
+  bc.classList.toggle('done', !!isThis); bc.disabled = !!isThis; bc.textContent = isThis ? '✓ In collection' : '＋ Save to collection';
+  bb.classList.toggle('done', !!inB); bb.disabled = !!inB; bb.textContent = inB ? '★ In binder' : '📒 Move to binder';
+}
+function saveThisCard(toBinder) {
+  const c = W.list[W.idx], sp = W.sp; if (!c) return;
+  S.owned[sp.dex] = { t: c.tier, c: c.id, at: Date.now() }; delete S.removed[sp.dex];
+  if (toBinder) delete S.toFile[sp.dex]; else S.toFile[sp.dex] = 1;
+  logMove(sp.dex, `${toBinder ? 'moved to binder' : 'saved to collection'}: ${c.set} #${c.num}`, c.tier); save();
+  const r = (toBinder ? $('#saveBinder') : $('#saveColl')).getBoundingClientRect(); burst(r.left + r.width / 2, r.top, toBinder ? ['#059669', '#34D399', '#fff', '#FBBF24'] : ['#4F46E5', '#A5B4FC', '#fff'], 50);
+  toast(`${sp.name}: ${c.set} #${c.num} ${toBinder ? 'is in your binder 📒' : 'saved to your collection'}`, toBinder ? '#059669' : '#4F46E5'); afterChange();
+}
+$('#stageBtns').addEventListener('pointerdown', e => e.stopPropagation());
+$('#saveColl').onclick = e => { e.stopPropagation(); saveThisCard(false); };
+$('#saveBinder').onclick = e => { e.stopPropagation(); saveThisCard(true); };
 function go(i, instant) {
   W.idx = Math.max(0, Math.min(W.list.length - 1, i)); $('#wheelRange').value = W.idx;
   const own = ownedOf(W.sp.dex), mine = own && displayCard(W.sp);
@@ -1228,7 +1260,7 @@ function go(i, instant) {
     el.classList.toggle('mine', !!own && W.list[j] === mine);
     el.classList.toggle('inbox', !!window.PKX && PKX.inBox(W.list[j].id));
   });
-  renderInfo();
+  renderInfo(); syncStageSave();
 }
 const TYPE_EMOJI = { Grass: '🌿', Fire: '🔥', Water: '💧', Lightning: '⚡', Psychic: '🔮', Fighting: '👊', Darkness: '🌙', Metal: '⚙️', Fairy: '✨', Dragon: '🐉', Colorless: '⭐' };
 const SET_TOTAL = {}; D.sets.forEach(x => SET_TOTAL[x[0]] = x[5] || 0);
@@ -1286,7 +1318,7 @@ function renderInfo() {
     ${window.PKX ? PKX.infoBox(c, sp) : ''}
     ${own ? `<button class="ghost" id="missBtn" style="color:var(--red)">Mark as missing</button>` : ''}`;
   $('#mineBtn') && ($('#mineBtn').onclick = e => { const r = e.target.getBoundingClientRect(); const was = own ? own.t : -1;
-    S.owned[sp.dex] = { t: c.tier, c: c.id, at: Date.now() }; delete S.removed[sp.dex];
+    S.owned[sp.dex] = { t: c.tier, c: c.id, at: Date.now() }; delete S.removed[sp.dex]; delete S.toFile[sp.dex];
     const bi = S.box.findIndex(b => b.id === c.id); if (bi >= 0) S.box.splice(bi, 1); // same physical card moved up from the box
     logMove(sp.dex, `set to ${c.set} #${c.num}`, c.tier); save();
     burst(r.left + r.width/2, r.top, c.tier >= 4 ? ['#FBBF24','#F472B6','#A78BFA','#fff'] : [t.c,'#fff','#A5B4FC'], c.tier >= 4 ? 90 : 50);
@@ -1447,14 +1479,14 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=27"></script>
-<script src="data/trending.js?v=27"></script>
-<script src="js/trending.js?v=27"></script>
-<script src="js/packs.js?v=27"></script>
+<script src="js/extras.js?v=29"></script>
+<script src="data/trending.js?v=29"></script>
+<script src="js/trending.js?v=29"></script>
+<script src="js/packs.js?v=29"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=27"></script>
-<script src="js/cloud.js?v=27"></script>
+<script src="data/firebase-config.js?v=29"></script>
+<script src="js/cloud.js?v=29"></script>
 </body>
 </html>

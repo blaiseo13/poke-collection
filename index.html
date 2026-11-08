@@ -627,6 +627,29 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
 /* card number up top in the details sheet */
 .cardno{display:inline-block;font:800 12px ui-monospace,Consolas,monospace;color:#fff;background:var(--text);border-radius:6px;padding:2px 7px;margin-top:4px;letter-spacing:.02em}
 @media (max-width:760px){.movers{grid-template-columns:1fr}.chgrid{grid-template-columns:repeat(2,1fr);gap:10px}.ch{padding:4px}}
+
+/* ---------- Quick edit: one tap = owned / not owned ---------- */
+.quickbtn{flex:none;display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--green);background:#ECFDF5;color:#065F46;border-radius:999px;padding:6px 14px;font:800 12px Inter,system-ui,sans-serif;cursor:pointer;transition:all .15s}
+.quickbtn.on{background:var(--green);color:#fff;box-shadow:0 4px 12px rgba(5,150,105,.35)}
+.viewonly .quickbtn{display:none}
+.quickbar{display:none;align-items:center;gap:10px;flex-wrap:wrap;background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px}
+body.quick .quickbar{display:flex}
+.quickbar b{font-size:14px}.quickbar .qcount{margin-left:auto;font:800 13px Inter}
+.grid.quick{grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.grid.quick .gen-h{margin:14px 0 2px}
+.grid.quick .tile.qt{content-visibility:visible;animation:none;position:relative;display:grid;justify-items:center;gap:1px;padding:8px 4px 7px;border-radius:12px;background:#fff;border:2px solid #E5E7EB;cursor:pointer;user-select:none;-webkit-user-select:none;transition:transform .12s,border-color .15s,background .15s}
+.grid.quick .tile.qt:active{transform:scale(.94)}
+.grid.quick .qt img{width:64px;height:64px;object-fit:contain;image-rendering:pixelated;filter:grayscale(1);opacity:.35;transition:filter .2s,opacity .2s}
+.grid.quick .qt .qn{font:700 11px Inter,system-ui,sans-serif;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text3)}
+.grid.quick .qt .qd{font:600 10px Inter;color:var(--text3)}
+.grid.quick .qt .qc{position:absolute;right:5px;top:5px;width:20px;height:20px;border-radius:50%;border:2px solid #D1D5DB;background:#fff;display:grid;place-items:center;font:900 12px Inter;color:#fff}
+.grid.quick .qt.on{border-color:var(--green);background:#F0FDF4}
+.grid.quick .qt.on img{filter:none;opacity:1}
+.grid.quick .qt.on .qn{color:var(--text)}
+.grid.quick .qt.on .qc{background:var(--green);border-color:var(--green)}
+.grid.quick .qt.pop{animation:qpop .28s cubic-bezier(.2,1.6,.4,1)}
+@keyframes qpop{50%{transform:scale(1.08)}}
+@media (max-width:760px){.grid.quick{grid-template-columns:repeat(4,1fr);gap:6px}.grid.quick .qt img{width:54px;height:54px}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -652,7 +675,9 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
 <main>
   <section class="view on" id="v-collection">
     <div class="kpis" id="kpis"></div>
+    <div class="quickbar" id="quickBar"><span>✅ <b>Quick edit is on.</b> Tap a Pokémon to mark it owned or not owned. Every tap saves.</span><span class="qcount" id="quickCount"></span></div>
     <div class="filters">
+      <button class="quickbtn" id="quickBtn" type="button" aria-pressed="false">✅ Quick edit</button>
       <div class="chips" id="genChips"></div>
       <div class="sep"></div>
       <div class="chips" id="showChips"></div>
@@ -723,10 +748,10 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=18"></script>
-<script src="data/my-collection.js?v=18"></script>
-<script src="data/sync.js?v=18"></script>
-<script src="js/binder.js?v=18"></script>
+<script src="data/cards.js?v=19"></script>
+<script src="data/my-collection.js?v=19"></script>
+<script src="data/sync.js?v=19"></script>
+<script src="js/binder.js?v=19"></script>
 <script>
 (() => {
 'use strict';
@@ -848,7 +873,7 @@ function displayCard(sp) {
 const nextTier = sp => { const o = ownedOf(sp.dex); if (!o) return 0; return sp.tiersAvail.find(t => t > o.t); };
 
 /* ---------- UI state ---------- */
-const UI = { gen: -1, show: 'all', tier: -1, sort: 'dex', q: '' };
+const UI = { gen: -1, show: 'all', tier: -1, sort: 'dex', q: '', quick: false };
 
 /* ---------- background balls ---------- */
 (() => { const bg = $('#bgballs'); for (let i = 0; i < 9; i++) { const b = document.createElement('i');
@@ -939,7 +964,10 @@ function filtered() {
   if (by) list = list.slice().sort((a,b) => by(a,b) || a.dex - b.dex);
   return list;
 }
+function quickTile(sp) { const o = ownedOf(sp.dex);
+  return `<div class="tile qt${o ? ' on' : ''}" data-dex="${sp.dex}" role="checkbox" aria-checked="${!!o}" tabindex="0"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${sp.dex}.png" alt=""><span class="qn">${sp.name}</span><span class="qd">#${String(sp.dex).padStart(3, '0')}</span><span class="qc">${o ? '✓' : ''}</span></div>`; }
 function tileHTML(sp, i) {
+  if (UI.quick) return quickTile(sp);
   const o = ownedOf(sp.dex), c = displayCard(sp), nt = nextTier(sp);
   const tier = o ? o.t : sp.coolest.tier, tc = TYPE_C[sp.type];
   const badge = o ? TIERS[o.t] : null, nxt = nt != null ? TIERS[nt] : null;
@@ -964,7 +992,7 @@ function renderGrid() {
       parts.push({ head: true, sp, html: `<div class="gen-h" data-g="${sp.gen}"><b>Gen ${ROMAN[sp.gen]} · ${gg[2]}</b> ${own}/${tot}</div>` }); }
     parts.push({ sp, i: idx++ });
   });
-  g.classList.toggle('noanim', !!g.dataset.painted || SMALL()); g.dataset.painted = 1;
+  g.classList.toggle('noanim', !!g.dataset.painted || SMALL()); g.dataset.painted = 1; g.classList.toggle('quick', UI.quick);
   if (GRID.io) GRID.io.disconnect();
   GRID.parts = parts; GRID.at = 0; g.innerHTML = '';
   appendGrid(SMALL() ? 120 : parts.length);
@@ -1018,7 +1046,19 @@ let imgScan = 0;
 function watchImgs() { imgScan = 0; document.querySelectorAll('img[data-src]:not([data-io])').forEach(im => { im.dataset.io = 1; imgIO.observe(im); }); }
 new MutationObserver(() => { if (!imgScan) imgScan = requestAnimationFrame(watchImgs); }).observe(document.body, { childList: true, subtree: true });
 
+// Quick edit: one tap = owned / not owned (saved to Firebase on every tap)
+function quickCount() { const n = SPECIES.filter(sp => ownedOf(sp.dex)).length; const el = $('#quickCount'); if (el) el.textContent = `${n} owned in ${S.binders[S.cur].name}`; }
+function quickToggle(dex) {
+  if (S.owned[dex]) { delete S.owned[dex]; S.removed[dex] = 1; delete S.toFile[dex]; }
+  else { S.owned[dex] = { t: 0, c: null, at: Date.now() }; delete S.removed[dex]; }
+  save(); refreshTile(dex); const el = document.querySelector(`.tile[data-dex="${dex}"]`); el && el.classList.add('pop');
+  renderKpis(); quickCount(); try { navigator.vibrate && navigator.vibrate(8); } catch (e) {}
+}
+$('#quickBtn').onclick = () => { UI.quick = !UI.quick; document.body.classList.toggle('quick', UI.quick); $('#quickBtn').classList.toggle('on', UI.quick); $('#quickBtn').setAttribute('aria-pressed', UI.quick);
+  $('#quickBtn').textContent = UI.quick ? '✓ Done editing' : '✅ Quick edit'; quickCount(); renderGrid(); };
+$('#grid').addEventListener('keydown', e => { if (!UI.quick || (e.key !== 'Enter' && e.key !== ' ')) return; const t = e.target.closest('.tile'); if (t) { e.preventDefault(); quickToggle(+t.dataset.dex); } });
 $('#grid').addEventListener('click', e => {
+  if (UI.quick) { const q = e.target.closest('.tile'); if (q) quickToggle(+q.dataset.dex); return; }
   const t = e.target.closest('.tile'); if (!t) return; const dex = +t.dataset.dex, sp = SPECIES[dex - 1];
   const act = e.target.closest('[data-act]')?.dataset.act;
   if (act === 'got') { S.owned[dex] = { t: 0, c: null, at: Date.now() }; delete S.removed[dex]; S.toFile[dex] = 1; delete S.filed[dex]; logMove(dex, 'added at Basic', 0); save();
@@ -1291,13 +1331,13 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=18"></script>
-<script src="data/trending.js?v=18"></script>
-<script src="js/trending.js?v=18"></script>
+<script src="js/extras.js?v=19"></script>
+<script src="data/trending.js?v=19"></script>
+<script src="js/trending.js?v=19"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=18"></script>
-<script src="js/cloud.js?v=18"></script>
+<script src="data/firebase-config.js?v=19"></script>
+<script src="js/cloud.js?v=19"></script>
 </body>
 </html>

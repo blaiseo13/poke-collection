@@ -42,7 +42,7 @@ function needAnswer(raw) {
     return o ? `<span class="ans have">✓ You have it</span><small>${k.TIERS[o.t].l}${o.c ? ' · ' + esc(k.BY_ID.get(o.c).set) + ' #' + esc(k.BY_ID.get(o.c).num) : ' · printing not set'}${k.S.toFile[sp.dex] ? ' · waiting to be filed' : ''}</small>`
       : `<span class="ans need">✗ You need it</span><small>${k.WANT.has(sp.dex) ? 'On your want list · ' : ''}${sp.cards.length} printings exist</small>`; };
   const rows = [], seen = new Set();
-  const addSp = sp => { if (sp && !seen.has(sp.dex)) { seen.add(sp.dex); rows.push(`<button class="ansrow" data-open="${sp.dex}"><img src="${sp.basic.img}" alt="" loading="lazy"><div><b>${esc(sp.name)}</b> <span class="muted">#${pad(sp.dex)}</span><div>${status(sp)}</div></div></button>`); } };
+  const addSp = sp => { if (sp && !seen.has(sp.dex)) { seen.add(sp.dex); rows.push(`<button class="ansrow ${k.ownedOf(sp.dex) ? 'have' : 'need'}" data-open="${sp.dex}"><img src="${sp.basic.img}" alt="" loading="lazy"><div><b>${esc(sp.name)}</b> <span class="muted">#${pad(sp.dex)}</span><div>${status(sp)}</div></div></button>`); } };
   // card number: has a slash, or letters + digits (TG05, SWSH069, GG12)
   const m = q.match(/^([a-z]{0,6}\s?\d{1,4})\s*(?:\/\s*([a-z]{0,6}\d{1,4}))?$/i);
   const isCardNo = m && (m[2] || /[a-z]/i.test(m[1]));
@@ -52,7 +52,7 @@ function needAnswer(raw) {
     const num = nnum(m[1].replace(/\s/g, '')), hits = k.CARDS.filter(c => nnum(c.num) === num)
       .sort((a, b) => ((total && setTotal[b.setId] === total) - (total && setTotal[a.setId] === total)) || (a.date < b.date ? 1 : -1)).slice(0, total && k.CARDS.some(c => nnum(c.num) === num && setTotal[c.setId] === total) ? 3 : 10);
     hits.forEach(c => { const dex = c.dex[0], sp = k.SPECIES[dex - 1], o = k.ownedOf(dex), mine = o && o.c === c.id;
-      rows.push(`<button class="ansrow" data-open="${dex}"><img src="${c.img}" alt="" loading="lazy"><div><b>${esc(c.name)}</b> <span class="muted">${esc(c.set)} #${esc(c.num)} · ${esc(c.rar)}</span><div>${mine ? '<span class="ans have">★ This exact card is in your binder</span>' : o ? `<span class="ans have">✓ You have ${esc(sp.name)}</span><small>a different printing; this one would be ${k.TIERS[c.tier].l}${c.tier > o.t ? ' (an upgrade!)' : ''}</small>` : `<span class="ans need">✗ You need ${esc(sp.name)}</span>`}</div></div></button>`); });
+      rows.push(`<button class="ansrow ${o ? 'have' : 'need'}" data-open="${dex}"><img src="${c.img}" alt="" loading="lazy"><div><b>${esc(c.name)}</b> <span class="muted">${esc(c.set)} #${esc(c.num)} · ${esc(c.rar)}</span><div>${mine ? '<span class="ans have">★ This exact card is in your binder</span>' : o ? `<span class="ans have">✓ You have ${esc(sp.name)}</span><small>a different printing; this one would be ${k.TIERS[c.tier].l}${c.tier > o.t ? ' (an upgrade!)' : ''}</small>` : `<span class="ans need">✗ You need ${esc(sp.name)}</span>`}</div></div></button>`); });
     if (!hits.length) rows.push(`<div class="muted">No card has the number ${esc(q)}.</div>`);
   } else {
     if (/^\d{1,4}$/.test(qn) && +qn >= 1 && +qn <= k.SPECIES.length) addSp(k.SPECIES[+qn - 1]);

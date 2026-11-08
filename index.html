@@ -8,6 +8,7 @@
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#F8F9FA">
+<meta http-equiv="Cache-Control" content="no-cache">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Poké">
@@ -381,6 +382,19 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
   .arrow{display:none}
   select{font-size:16px}
 }
+
+/* ---------- have / need highlighting ---------- */
+.ansrow.have{background:#ECFDF5;border-color:#6EE7B7;box-shadow:inset 6px 0 0 var(--green)}
+.ansrow.need{background:#FEF2F2;border-color:#FCA5A5;box-shadow:inset 6px 0 0 var(--red)}
+.ansrow{padding-left:16px}
+.ans{color:#fff!important;padding:3px 10px;border-radius:99px;font-size:12px;letter-spacing:.02em;margin:4px 0 2px}
+.ans.have{background:var(--green)}.ans.need{background:var(--red)}
+.status{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.status .badge{margin-top:0}
+.pill{display:inline-flex;align-items:center;font:800 10px Inter,system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;color:#fff;border-radius:99px;padding:3px 8px}
+.pill.have{background:var(--green)}.pill.need{background:var(--red)}.pill.want{background:var(--amber)}
+.owned .card3d{outline:3px solid color-mix(in srgb,var(--green) 55%,transparent);outline-offset:2px}
+.owned.t4 .card3d,.owned.t5 .card3d{outline:none}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -476,10 +490,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=8"></script>
-<script src="data/my-collection.js?v=8"></script>
-<script src="data/sync.js?v=8"></script>
-<script src="js/binder.js?v=8"></script>
+<script src="data/cards.js?v=9"></script>
+<script src="data/my-collection.js?v=9"></script>
+<script src="data/sync.js?v=9"></script>
+<script src="js/binder.js?v=9"></script>
 <script>
 (() => {
 'use strict';
@@ -697,7 +711,7 @@ function tileHTML(sp, i) {
     <div class="card3d"><img loading="lazy" decoding="async" src="${c.img}" alt="${sp.name}" data-dex="${sp.dex}"><div class="foil"></div><div class="glare"></div>
       <div class="ribbon">${WANT.has(sp.dex) ? 'WANT' : 'MISSING'}</div>${o && S.toFile[sp.dex] ? '<div class="filetag">TO FILE</div>' : ''}<div class="cool">Coolest: ${TIERS[sp.coolest.tier].l}</div>${window.PKX ? PKX.tileExtra(sp, o) : ''}</div>
     <div class="meta"><span class="tdot"></span><span class="nm">${sp.name}</span><span class="num">#${String(sp.dex).padStart(3,'0')}</span></div>
-    <span class="badge" style="--bc:${badge ? badge.c : WANT.has(sp.dex) ? 'var(--amber)' : 'var(--red)'}">${badge ? badge.l : WANT.has(sp.dex) ? 'Want' : 'Missing'}</span>
+    <div class="status">${o ? `<span class="pill have">✓ Have</span><span class="badge" style="--bc:${badge.c}">${badge.l}</span>` : WANT.has(sp.dex) ? '<span class="pill want">★ Want</span><span class="pill need">✗ Need</span>' : '<span class="pill need">✗ Need</span>'}</div>
     <div class="acts">${o
       ? `<button class="up" data-act="up" style="--nc:${nxt ? nxt.c : '#D97706'}" ${nxt ? '' : 'disabled'}>${nxt ? '⬆ ' + nxt.l : '★ Top form'}</button>${S.toFile[sp.dex] ? '<button class="fl" data-act="file" title="Mark as filed in your binder">📁</button>' : ''}<button class="dn" data-act="dn" title="Step down a form (or remove)">↓</button>`
       : `<button class="got" data-act="got">+ I have it</button>`}</div>
@@ -922,6 +936,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=8"></script>
+<script src="js/extras.js?v=9"></script>
 </body>
 </html>

@@ -78,7 +78,7 @@ function updateNeed() {
   $('#needCount').textContent = `${list.length} shown`;
   const shown = isCardNo ? [] : list;
   $('#needGrid').innerHTML = shown.length ? shown.map(sp => `<div class="needc${k.WANT.has(sp.dex) ? ' w' : ''}" data-dex="${sp.dex}">
-      <img loading="lazy" src="${sp.basic.img}" alt="" data-open="${sp.dex}">
+      <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${sp.basic.img}" alt="" data-open="${sp.dex}">
       <div class="nn"><b>${sp.name}</b><span>#${pad(sp.dex)}</span></div>
       <div class="muted small">${esc(sp.basic.set)} #${sp.basic.num}</div>
       <button class="gotit" data-got="${sp.dex}">✓ Got it</button></div>`).join('')

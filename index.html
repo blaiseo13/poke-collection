@@ -314,7 +314,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .needc{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);transition:transform .15s,box-shadow .15s}
 .needc:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(0,0,0,.1)}
 .needc.w{border-color:#FCD34D;background:linear-gradient(#FFFBEB,#fff 40%)}
-.needc img{width:100%;border-radius:6px;cursor:pointer;display:block}
+.needc img{width:100%;aspect-ratio:245/342;object-fit:cover;background:#EEF0F3;border-radius:6px;cursor:pointer;display:block}
 .nn{display:flex;justify-content:space-between;align-items:baseline;margin-top:7px;gap:6px}
 .nn b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nn span{font-size:11px;color:var(--text3);font-weight:600}
 .gotit{width:100%;margin-top:7px;border:1px solid #A7F3D0;background:#ECFDF5;color:var(--green);border-radius:6px;padding:6px;font-weight:700;font-size:12px;transition:all .15s}
@@ -475,6 +475,21 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .sheet.fresh .orb{animation:orbIn .6s cubic-bezier(.2,1.6,.4,1) backwards,orb 2.6s ease-in-out .6s infinite}
 @keyframes orbIn{from{transform:scale(0) rotate(-90deg)}}
 @media (max-width:760px){.sheet{padding:14px 12px}.cs-name h3{font-size:18px}.pv{font-size:28px}.dexmark{font-size:72px}}
+
+/* ---------- phones & touch: keep memory low (iPhone reloads pages that use too much) ---------- */
+@media (hover:none),(max-width:760px){
+  .card3d{transform:none!important;transition:none;transform-style:flat}
+  .glare,.spark,.bgballs{display:none!important}
+  .tile:not(.t1):not(.t3):not(.t4):not(.t5) .foil{display:none}
+  .t4 .foil,.t5 .foil{animation:none}
+  .missing .card3d{animation:none}
+  .missing .card3d img{filter:none;opacity:.42}
+  .pp,.cool{backdrop-filter:none;transform:none}
+  .ribbon{transform:none}
+  .stage .wc img{-webkit-box-reflect:none}
+  .sheet::before{animation:none;opacity:.5}
+  header{backdrop-filter:none;background:var(--bg)}
+}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -570,10 +585,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=10"></script>
-<script src="data/my-collection.js?v=10"></script>
-<script src="data/sync.js?v=10"></script>
-<script src="js/binder.js?v=10"></script>
+<script src="data/cards.js?v=11"></script>
+<script src="data/my-collection.js?v=11"></script>
+<script src="data/sync.js?v=11"></script>
+<script src="js/binder.js?v=11"></script>
 <script>
 (() => {
 'use strict';
@@ -788,7 +803,7 @@ function tileHTML(sp, i) {
   const tier = o ? o.t : sp.coolest.tier, tc = TYPE_C[sp.type];
   const badge = o ? TIERS[o.t] : null, nxt = nt != null ? TIERS[nt] : null;
   return `<div class="tile ${o ? 'owned t' + o.t + (S.toFile[sp.dex] ? ' tofile' : '') : 'missing' + (WANT.has(sp.dex) ? ' want' : '')}" data-dex="${sp.dex}" style="--tc:${tc};--dl:${Math.min(i, 24) * 28}ms">
-    <div class="card3d"><img loading="lazy" decoding="async" src="${c.img}" alt="${sp.name}" data-dex="${sp.dex}"><div class="foil"></div><div class="glare"></div>
+    <div class="card3d"><img decoding="async" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${c.img}" alt="${sp.name}" data-dex="${sp.dex}"><div class="foil"></div><div class="glare"></div>
       <div class="ribbon">${WANT.has(sp.dex) ? 'WANT' : 'MISSING'}</div>${o && S.toFile[sp.dex] ? '<div class="filetag">TO FILE</div>' : ''}<div class="cool">Coolest: ${TIERS[sp.coolest.tier].l}</div>${window.PKX ? PKX.tileExtra(sp, o) : ''}</div>
     <div class="meta"><span class="tdot"></span><span class="nm">${sp.name}</span><span class="num">#${String(sp.dex).padStart(3,'0')}</span></div>
     <div class="status">${o ? `<span class="pill have">✓ Have</span><span class="badge" style="--bc:${badge.c}">${badge.l}</span>` : WANT.has(sp.dex) ? '<span class="pill want">★ Want</span><span class="pill need">✗ Need</span>' : '<span class="pill need">✗ Need</span>'}</div>
@@ -838,7 +853,14 @@ $('#grid').addEventListener('pointermove', e => {
   c.style.setProperty('--mx', x * 100 + '%'); c.style.setProperty('--my', y * 100 + '%');
 });
 $('#grid').addEventListener('pointerout', e => { const c = e.target.closest('.card3d'); if (c && !c.contains(e.relatedTarget)) { c.style.setProperty('--rx','0deg'); c.style.setProperty('--ry','0deg'); } });
-$('#grid').addEventListener('error', e => { const im = e.target; if (im.tagName === 'IMG' && !im.dataset.fb) { im.dataset.fb = 1; im.src = ART(im.dataset.dex); im.style.objectFit = 'contain'; } }, true);
+$('#grid').addEventListener('error', e => { const im = e.target; if (im.tagName === 'IMG' && !im.dataset.fb && im.dataset.src) { im.dataset.fb = 1; im.dataset.src = ART(im.dataset.dex); im.src = im.dataset.src; im.style.objectFit = 'contain'; } }, true);
+// Pictures in long lists: load when within ~2 screens, release when far away, so the phone never holds hundreds at once.
+const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+const imgIO = new IntersectionObserver(es => es.forEach(e => { const im = e.target, want = im.dataset.src;
+  if (e.isIntersecting) { if (want && im.getAttribute('src') !== want) im.src = want; } else if (im.getAttribute('src') !== BLANK) im.src = BLANK; }), { rootMargin: '1400px 0px' });
+let imgScan = 0;
+function watchImgs() { imgScan = 0; document.querySelectorAll('img[data-src]:not([data-io])').forEach(im => { im.dataset.io = 1; imgIO.observe(im); }); }
+new MutationObserver(() => { if (!imgScan) imgScan = requestAnimationFrame(watchImgs); }).observe(document.body, { childList: true, subtree: true });
 
 $('#grid').addEventListener('click', e => {
   const t = e.target.closest('.tile'); if (!t) return; const dex = +t.dataset.dex, sp = SPECIES[dex - 1];
@@ -1056,6 +1078,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=10"></script>
+<script src="js/extras.js?v=11"></script>
 </body>
 </html>

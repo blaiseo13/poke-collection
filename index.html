@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
-<script id="stayfresh">/* stay fresh: reload when a newer build is on the site */(function(){var V='39';function chk(){try{fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();if(!t||t===V)return;var u=new URL(location.href);if(u.searchParams.get('v')===t)return;u.searchParams.set('v',t);location.replace(u.toString())}).catch(function(){})}catch(e){}}chk();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')chk()});setInterval(chk,300000)})();</script>
+<script id="stayfresh">/* stay fresh: reload when a newer build is on the site */(function(){var V='40';function chk(){try{fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();if(!t||t===V)return;var u=new URL(location.href);if(u.searchParams.get('v')===t)return;u.searchParams.set('v',t);location.replace(u.toString())}).catch(function(){})}catch(e){}}chk();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')chk()});setInterval(chk,300000)})();</script>
 <script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
-<link rel="manifest" href="manifest.webmanifest?v=39">
-<link rel="icon" href="icons/favicon-64.png?v=39" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=39">
+<link rel="manifest" href="manifest.webmanifest?v=40">
+<link rel="icon" href="icons/favicon-64.png?v=40" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=40">
 <meta name="theme-color" content="#F8F9FA">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -350,6 +350,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .ripsum div{margin-right:auto}
 .ripdone h3{font-size:16px;margin:8px 0}.ripdone ul{margin:0 0 16px;padding-left:20px;line-height:1.8}
 .setrow{display:grid;grid-template-columns:90px 1fr 1fr 120px;gap:12px;align-items:center;font-size:13px;padding:6px 0;border-bottom:1px solid #F3F4F6}
+.setrow[data-set]{cursor:pointer;border-radius:8px;transition:background .15s}.setrow[data-set]:hover{background:#EEF2FF}
 .setrow img{max-width:84px;max-height:30px;object-fit:contain;justify-self:center}
 .setrow .sn{font-weight:600}.setrow .sn small{display:block;color:var(--text3);font-weight:500}
 .setrow .sv{text-align:right;font-weight:700}.setrow .sv small{display:block;color:var(--text3);font-weight:500}
@@ -1008,10 +1009,10 @@ body.game-op #tabs button[data-v="best"]{display:none}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=39"></script>
-<script src="data/my-collection.js?v=39"></script>
-<script src="data/sync.js?v=39"></script>
-<script src="js/binder.js?v=39"></script>
+<script src="data/cards.js?v=40"></script>
+<script src="data/my-collection.js?v=40"></script>
+<script src="data/sync.js?v=40"></script>
+<script src="js/binder.js?v=40"></script>
 <script>
 (() => {
 'use strict';
@@ -1628,23 +1629,24 @@ function applyCloud(books, box, favs, goals) {
   fillBinderSel(); save(); renderGrid(); const on = curView(); if (on !== 'collection') showView(on, false);
   if ($('#modal').classList.contains('on')) { renderArena(W.sp); go(W.idx); }
 }
-window.PKC = { tierOfRarity, cardPoints, binderPoints, applyCloud, setEditor, FAVS, GOALS, S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
+window.PKC = { wheelGo: i => go(i), tierOfRarity, cardPoints, binderPoints, applyCloud, setEditor, FAVS, GOALS, S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
 renderGrid(); placePill(); window.PKX && PKX.start(); if (GAME === 'op') setTimeout(() => setGame('op'), 0);
 { const v0 = (location.hash || '').slice(1); history.replaceState({ v: v0 || 'collection' }, ''); if (v0 && v0 !== 'collection') showView(v0, false); }
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/ladder.js?v=39"></script>
-<script src="js/extras.js?v=39"></script>
-<script src="data/trending.js?v=39"></script>
-<script src="js/trending.js?v=39"></script>
-<script src="js/packs.js?v=39"></script>
-<script src="js/best.js?v=39"></script>
-<script src="js/onepiece.js?v=39"></script>
+<script src="js/ladder.js?v=40"></script>
+<script src="js/sets.js?v=40"></script>
+<script src="js/extras.js?v=40"></script>
+<script src="data/trending.js?v=40"></script>
+<script src="js/trending.js?v=40"></script>
+<script src="js/packs.js?v=40"></script>
+<script src="js/best.js?v=40"></script>
+<script src="js/onepiece.js?v=40"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=39"></script>
-<script src="js/cloud.js?v=39"></script>
+<script src="data/firebase-config.js?v=40"></script>
+<script src="js/cloud.js?v=40"></script>
 </body>
 </html>

@@ -6,7 +6,8 @@
 <title>Poké Collection</title>
 <script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/emblem.svg" type="image/svg+xml">
+<link rel="alternate icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#F8F9FA">
 <meta http-equiv="Cache-Control" content="no-cache">
@@ -747,6 +748,20 @@ body.quick .quickbar{display:flex}
 .comp-top>*,.two>*,.sgrid>*,.movers>*,.panel{min-width:0}
 .minirow{max-width:100%}
 html,body{overflow-x:clip}
+
+/* ---------- our own emblem: an ember orb (icons/emblem.svg) ---------- */
+.ball{border:0!important;background:url(icons/emblem.svg) center/contain no-repeat!important}
+.ball::after{display:none!important}
+.logo .ball.emb{background:none!important;width:34px;height:34px;filter:drop-shadow(0 2px 6px rgba(255,90,0,.45))}
+.logo .ball.emb svg{width:100%;height:100%;overflow:visible}
+.emb .licks path{transform-box:fill-box;transform-origin:50% 100%;animation:flick 1.1s ease-in-out infinite alternate}
+.emb .licks .l2{animation-duration:.9s;animation-delay:-.3s}.emb .licks .l3{animation-duration:1.3s;animation-delay:-.6s}
+@keyframes flick{0%{transform:scaleY(.82) skewX(-4deg);opacity:.85}100%{transform:scaleY(1.12) skewX(4deg);opacity:1}}
+.emb .core{transform-box:fill-box;transform-origin:center;animation:corepulse 1.8s ease-in-out infinite}
+@keyframes corepulse{50%{transform:scale(1.18);filter:brightness(1.25)}}
+.bgballs i{background:url(icons/emblem.svg) center/contain no-repeat!important;border:0!important;opacity:.07!important}
+.sales.alt{background:#fff;color:var(--text);border:1px solid var(--border);margin-left:6px}
+@media (prefers-reduced-motion:reduce){.emb .licks path,.emb .core{animation:none}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -756,7 +771,7 @@ html,body{overflow-x:clip}
 <div class="bgballs" id="bgballs"></div>
 <header>
   <div class="hwrap">
-    <div class="logo"><div class="ball" id="logoBall"></div>Poké Collection<select id="binderSel" class="binderSel" aria-label="Binder" title="Switch binder"></select><span class="editchip" id="editChip" hidden>✏️ Editing</span></div>
+    <div class="logo"><div class="ball emb" id="logoBall" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -14 112 112">  <defs>  <radialGradient id="em-molten" cx="42%" cy="30%" r="70%">   <stop offset="0" stop-color="#FFF6C2"/>   <stop offset=".28" stop-color="#FFC233"/>   <stop offset=".6" stop-color="#FF6A00"/>   <stop offset="1" stop-color="#B81E00"/>  </radialGradient>  <linearGradient id="em-coal" x1="0" y1="0" x2="0" y2="1">   <stop offset="0" stop-color="#4A1C0E"/>   <stop offset="1" stop-color="#160704"/>  </linearGradient>  <radialGradient id="em-core" cx="45%" cy="40%" r="60%">   <stop offset="0" stop-color="#FFFBE6"/>   <stop offset=".45" stop-color="#FFD24D"/>   <stop offset="1" stop-color="#FF5A00"/>  </radialGradient>  <linearGradient id="em-lick" x1="0" y1="1" x2="0" y2="0">   <stop offset="0" stop-color="#FF5A00"/>   <stop offset=".6" stop-color="#FFB020"/>   <stop offset="1" stop-color="#FFE680" stop-opacity=".2"/>  </linearGradient>  <clipPath id="em-orb"><circle cx="50" cy="54" r="40"/></clipPath> </defs>  <g class="licks" fill="url(#em-lick)">  <path class="l1" d="M28 28 C22 16 31 8 28 -2 C40 6 42 18 38 28 Z"/>  <path class="l2" d="M44 20 C38 6 50 -2 48 -12 C62 0 62 12 57 21 Z"/>  <path class="l3" d="M62 26 C60 14 70 8 71 0 C79 11 77 21 72 29 Z"/> </g> <g clip-path="url(#em-orb)">  <rect x="0" y="0" width="100" height="100" fill="url(#em-molten)"/>    <path d="M6 62 C18 50 28 70 40 58 S60 44 72 54 S88 58 96 48 L96 100 L6 100 Z" fill="url(#em-coal)"/>  <g fill="#FF8A1F" opacity=".9">   <circle cx="26" cy="80" r="1.4"/><circle cx="40" cy="88" r="1"/><circle cx="62" cy="82" r="1.6"/><circle cx="74" cy="72" r="1"/><circle cx="52" cy="76" r=".9"/>  </g> </g>  <g clip-path="url(#em-orb)"><path d="M6 62 C18 50 28 70 40 58 S60 44 72 54 S88 58 96 48" fill="none" stroke="#1E0803" stroke-width="5.5"/></g> <circle cx="50" cy="54" r="40" fill="none" stroke="#1E0803" stroke-width="4.5"/>  <circle cx="50" cy="52" r="11.5" fill="#1E0803"/> <circle class="core" cx="50" cy="52" r="7" fill="url(#em-core)"/> <circle cx="47.5" cy="49.5" r="2" fill="#fff" opacity=".85"/></svg></div>Poké Collection<select id="binderSel" class="binderSel" aria-label="Binder" title="Switch binder"></select><span class="editchip" id="editChip" hidden>✏️ Editing</span></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Search name or #number" autocomplete="off"><kbd>/</kbd>
@@ -846,10 +861,10 @@ html,body{overflow-x:clip}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=26"></script>
-<script src="data/my-collection.js?v=26"></script>
-<script src="data/sync.js?v=26"></script>
-<script src="js/binder.js?v=26"></script>
+<script src="data/cards.js?v=27"></script>
+<script src="data/my-collection.js?v=27"></script>
+<script src="data/sync.js?v=27"></script>
+<script src="js/binder.js?v=27"></script>
 <script>
 (() => {
 'use strict';
@@ -1251,7 +1266,7 @@ function renderInfo() {
     <div class="pricehero">${pd.v != null
       ? `<div class="plab">Market price</div><div class="pv" data-money="${pd.v}">${fmtMoney(pd.v)}</div>
          <div class="pmeta"><span class="vchip">${pd.variant}</span><span>TCGplayer · as of ${pd.asOf}</span></div>
-         ${pd.url ? `<a class="sales" href="${pd.url}" target="_blank" rel="noopener">See recent sales ↗</a>` : ''}`
+         ${pd.url ? `<a class="sales" href="${pd.url}" target="_blank" rel="noopener">See recent sales ↗</a>` : ''}<a class="sales alt" href="https://www.pokeprice.gg/cards/${String(c.id).replace(/~\d+$/, '')}" target="_blank" rel="noopener">pokeprice.gg ↗</a>`
       : pd.loading ? '<div class="plab">Market price</div><div class="pv skel"></div>' : '<div class="plab">Market price</div><div class="pv none">No price listed</div>'}</div>
     <div class="stats2">
       <div class="st"><div class="stl">HP</div><div class="stv">${hp || '–'}</div><div class="bar2"><i style="--w:${Math.min(100, hp / 340 * 100)}%"></i></div></div>
@@ -1432,14 +1447,14 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=26"></script>
-<script src="data/trending.js?v=26"></script>
-<script src="js/trending.js?v=26"></script>
-<script src="js/packs.js?v=26"></script>
+<script src="js/extras.js?v=27"></script>
+<script src="data/trending.js?v=27"></script>
+<script src="js/trending.js?v=27"></script>
+<script src="js/packs.js?v=27"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=26"></script>
-<script src="js/cloud.js?v=26"></script>
+<script src="data/firebase-config.js?v=27"></script>
+<script src="js/cloud.js?v=27"></script>
 </body>
 </html>

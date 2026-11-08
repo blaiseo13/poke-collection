@@ -112,6 +112,7 @@ function openCard(c) {
       <div class="lbchart"><div class="chead"><small>Price history</small><span class="cchg"></span></div>
         <div class="rng">${[['1w', '1W'], ['1m', '1M'], ['ytd', 'YTD'], ['1y', '1Y'], ['all', 'All']].map(([r, l]) => `<button data-r="${r}" class="${r === '1y' ? 'on' : ''}">${l}</button>`).join('')}</div>
         <div class="cbody"><span class="spin"></span></div></div>
+      ${(() => { const ours = k.CARDS.find(x => x.tdId === c.id); return ours ? `<a class="sales alt" style="margin:0;text-align:center" href="https://www.pokeprice.gg/cards/${String(ours.id).replace(/~\d+$/, '')}" target="_blank" rel="noopener">eBay sold &amp; graded prices on pokeprice.gg ↗</a>` : ''; })()}
       ${sp ? `<button class="primary lbw" data-dex="${c.dex}">See every ${esc(sp.name)} printing →</button>` : ''}</div></div>`;
   lb.classList.add('on'); document.body.style.overflow = 'hidden';
   const cbox = lb.querySelector('.lbchart'), sid = String(c.id).slice(0, String(c.id).lastIndexOf('-'));

@@ -11,7 +11,7 @@ const pct = t => t == null ? '' : `<span class="tr ${t > 0.005 ? 'up' : t < -0.0
 // how big a hit is, from the printed rarity (5 = the gold-tier chase)
 const hitRank = r => /mega hyper|hyper rare|special illustration/i.test(r) ? 5 : /illustration rare/i.test(r) ? 4 : /ultra rare|ace spec|shiny|double rare|black white/i.test(r) ? 3 : 0;
 // rarity text -> our six forms, for points
-const tierOfText = r => /mega hyper|hyper rare|special illustration|illustration rare|secret|rainbow|gold/i.test(r) ? 5 : /ultra|double rare|ace spec|shiny|black white|ex$|vmax|vstar|gx/i.test(r) ? 4 : /holo/i.test(r) ? 3 : /rare/i.test(r) ? 2 : 0;
+const tierOfText = r => window.PKC && PKC.tierOfRarity ? PKC.tierOfRarity(r) : 0;
 const ptsOf = (c, date) => window.PKC ? PKC.cardPoints(tierOfText(c.r || ''), c.usd, date) : 0;
 const HIT_C = { 5: '#D97706', 4: '#DB2777', 3: '#4F46E5', 0: '#9CA3AF' };
 const ST = { set: null, filter: 'all', sort: 'num', loading: false };
@@ -120,16 +120,21 @@ function openCard(c) {
       ${(() => { const ours = k.CARDS.find(x => x.tdId === c.id); return ours ? `<a class="sales alt" style="margin:0;text-align:center" href="https://www.pokeprice.gg/cards/${String(ours.id).replace(/~\d+$/, '')}" target="_blank" rel="noopener">eBay sold &amp; graded prices on pokeprice.gg ↗</a>` : ''; })()}
       ${sp ? `<button class="primary lbw" data-dex="${c.dex}">See every ${esc(sp.name)} printing →</button>` : ''}</div></div>`;
   lb.classList.add('on'); document.body.style.overflow = 'hidden';
+  if (!(history.state && history.state.lb)) { history.pushState(Object.assign({}, history.state, { lb: 1 }), '', location.href); LB.pushed = true; }
   const cbox = lb.querySelector('.lbchart'), sid = String(c.id).slice(0, String(c.id).lastIndexOf('-'));
   loadHistory(sid).then(h => { drawChart(cbox, h, c.num, '1y');
     cbox.querySelector('.rng').onclick = e => { const b = e.target.closest('[data-r]'); if (!b) return; cbox.querySelectorAll('.rng button').forEach(x => x.classList.toggle('on', x === b)); drawChart(cbox, h, c.num, b.dataset.r); }; });
   const card = lb.querySelector('.lbcard');
   lb.onpointermove = e => { if (e.pointerType !== 'mouse') return; const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
     card.style.transform = `perspective(900px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg)`; card.style.setProperty('--mx', (x + .5) * 100 + '%'); };
-  const close = () => { lb.classList.remove('on'); document.body.style.overflow = ''; };
+  const close = () => { const p = LB.pushed; LB.pushed = false; lb.classList.remove('on'); document.body.style.overflow = ''; if (p && history.state && history.state.lb) history.back(); };
   lb.onclick = e => { if (e.target === lb || e.target.closest('.lbx')) close(); const w = e.target.closest('.lbw'); if (w) { close(); k.openWheel(k.SPECIES[+w.dataset.dex - 1]); } };
-  document.addEventListener('keydown', function esc2(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); } });
+  LB.close = close;
 }
+// one Escape handler and one Back handler for the big card view
+const LB = { pushed: false, close: null };
+document.addEventListener('keydown', e => { const lb = $('#cardLB'); if (e.key === 'Escape' && lb && lb.classList.contains('on') && LB.close) LB.close(); });
+window.addEventListener('popstate', () => { const lb = $('#cardLB'); if (lb && lb.classList.contains('on')) { LB.pushed = false; lb.classList.remove('on'); document.body.style.overflow = ''; } });
 window.PKP = { render, openCard, hitRank, ptsOf };
 if (document.querySelector('#v-packs.on')) render();
 })();

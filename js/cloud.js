@@ -28,23 +28,26 @@ function apply() {
   if (sameBooks && sameBox && sameFavs) return;
   k.applyCloud(remote.books, remote.box, remote.favs);
 }
-db.collection('binders').onSnapshot(s => { if (s.metadata.hasPendingWrites) return; remote.books = s.docs.map(d => ({ id: d.id, ...d.data() })); remote.books.forEach(b => pushed['binders/' + b.id] = JSON.stringify(serBinder(b))); apply(); }, () => {});
+db.collection('binders').onSnapshot(s => { if (s.metadata.hasPendingWrites) return; remote.books = s.docs.map(d => ({ id: d.id, ...d.data() })); remote.books.forEach(b => pushed['binders/' + b.id] = JSON.stringify(serBinder(b))); apply(); }, () => { K().toast('Can’t reach your collection right now. Changes on this device won’t save until it reconnects.', '#DC2626'); });
 db.doc('box/main').onSnapshot(s => { if (s.metadata.hasPendingWrites || !s.exists) return; remote.box = s.data().items || []; pushed['box/main'] = JSON.stringify(serBox(remote.box)); apply(); }, () => {});
 db.doc('prefs/main').onSnapshot(s => { if (s.metadata.hasPendingWrites || !s.exists) return; remote.favs = (s.data().favs || []).map(Number); pushed['prefs/main'] = JSON.stringify(remote.favs.slice().sort((a, b) => a - b)); apply(); }, () => {});
 
 // editor: write whatever changed, a moment after the last tap
 let t = null;
 function push() {
-  if (!editor) return; clearTimeout(t);
+  // never write before the live data has arrived: a stale copy on this device must not overwrite the cloud
+  if (!editor || !remote.books) return; clearTimeout(t);
   t = setTimeout(() => {
     const k = K(), S = k.S;
-    Object.keys(S.binders).forEach(id => { const j = JSON.stringify(serBinder(S.binders[id])); if (pushed['binders/' + id] !== j) { pushed['binders/' + id] = j; db.doc('binders/' + id).set(JSON.parse(j)).catch(fail); } });
-    const bj = JSON.stringify(serBox(S.box)); if (pushed['box/main'] !== bj) { pushed['box/main'] = bj; db.doc('box/main').set({ items: JSON.parse(bj) }).catch(fail); }
-    const fj = JSON.stringify([...k.FAVS].map(Number).sort((a, b) => a - b)); if (pushed['prefs/main'] !== fj) { pushed['prefs/main'] = fj; db.doc('prefs/main').set({ favs: JSON.parse(fj) }).catch(fail); }
+    // after each write, update our copy of the cloud too, so a later snapshot of another document can't roll this change back
+    Object.keys(S.binders).forEach(id => { const j = JSON.stringify(serBinder(S.binders[id])); if (pushed['binders/' + id] !== j) { pushed['binders/' + id] = j; const body = JSON.parse(j);
+      db.doc('binders/' + id).set(body).catch(fail); const i = remote.books.findIndex(b => b.id === id); if (i >= 0) remote.books[i] = { id, ...body }; else remote.books.push({ id, ...body }); } });
+    const bj = JSON.stringify(serBox(S.box)); if (pushed['box/main'] !== bj) { pushed['box/main'] = bj; remote.box = JSON.parse(bj); db.doc('box/main').set({ items: JSON.parse(bj) }).catch(fail); }
+    const fj = JSON.stringify([...k.FAVS].map(Number).sort((a, b) => a - b)); if (pushed['prefs/main'] !== fj) { pushed['prefs/main'] = fj; remote.favs = JSON.parse(fj); db.doc('prefs/main').set({ favs: JSON.parse(fj) }).catch(fail); }
   }, 700);
 }
 function fail() { K().toast('Couldn’t save that change. Check your connection.', '#DC2626'); }
-function removeBinder(id) { if (!editor) return; delete pushed['binders/' + id]; db.doc('binders/' + id).delete().catch(fail); }
+function removeBinder(id) { if (!editor) return; delete pushed['binders/' + id]; if (remote.books) remote.books = remote.books.filter(b => b.id !== id); db.doc('binders/' + id).delete().catch(fail); }
 
 let key = null; try { key = localStorage.getItem('pkc.editKey'); } catch (e) {}
 if (key) {

@@ -62,18 +62,61 @@ function render() {
   root.querySelector('#packFilter').onclick = e => { const b = e.target.closest('[data-f]'); if (b) { ST.filter = b.dataset.f; render(); } if (e.target.id === 'packSort') { ST.sort = ST.sort === 'num' ? 'price' : 'num'; render(); } };
   root.onclick = e => { const el = e.target.closest('[data-card]'); if (!el || e.target.closest('#packPick,#packFilter')) return; const c = cards.find(x => x.id === el.dataset.card); c && openCard(c); };
 }
-// big card view: tilt, shine, price, and a link to every printing of that Pokémon
+
+// ----- price history chart (data/history/<pack>.json, one price per card per day) -----
+const HIST = {};
+async function loadHistory(sid) {
+  if (sid in HIST) return HIST[sid];
+  try { const r = await fetch(`data/history/${sid}.json?d=${(window.PK_TREND && PK_TREND.asOf) || ''}`); HIST[sid] = r.ok ? await r.json() : null; } catch (e) { HIST[sid] = null; }
+  return HIST[sid];
+}
+function drawChart(box, h, num, range) {
+  const row = h && h.p && h.p[String(num)];
+  const all = row ? h.dates.map((d, i) => [d, row[i]]).filter(x => x[1] != null) : [];
+  const today = new Date(), days = { '1w': 7, '1m': 30, '1y': 365 }[range];
+  let pts = all;
+  if (range === 'ytd') pts = all.filter(x => x[0] >= today.getFullYear() + '-01-01');
+  else if (days) { const cut = new Date(today - days * 864e5).toISOString().slice(0, 10); pts = all.filter(x => x[0] >= cut); }
+  const body = box.querySelector('.cbody'), chg = box.querySelector('.cchg');
+  if (pts.length < 2) {
+    body.innerHTML = `<div class="cempty"><b>${pts.length ? money(pts[pts.length - 1][1]) : '–'}</b><span>Tracking since ${all[0] ? us(all[0][0]) : 'today'}. The chart grows by one point each day.</span></div>`;
+    chg.innerHTML = ''; return;
+  }
+  const W = 320, H = 120, P = 6, vs = pts.map(x => x[1]), mn = Math.min(...vs), mx = Math.max(...vs), sp = mx - mn || 1;
+  const X = i => P + i / (pts.length - 1) * (W - 2 * P), Y = v => P + (1 - (v - mn) / sp) * (H - 2 * P);
+  const d = pts.map((x, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(x[1]).toFixed(1)}`).join('');
+  const up = vs[vs.length - 1] >= vs[0], col = up ? '#059669' : '#DC2626';
+  body.innerHTML = `<svg viewBox="0 0 ${W} ${H}" class="csvg" role="img" aria-label="Price chart"><path d="${d} L${X(pts.length - 1)},${H} L${X(0)},${H} Z" fill="${col}" opacity=".12"/>
+    <path d="${d}" fill="none" stroke="${col}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" class="cline"/>
+    <circle cx="${X(pts.length - 1)}" cy="${Y(vs[vs.length - 1])}" r="4" fill="${col}" stroke="#fff" stroke-width="2"/>
+    <line class="cx" x1="0" x2="0" y1="0" y2="${H}" stroke="#9CA3AF" stroke-dasharray="3 3" opacity="0"/></svg>
+    <div class="ctip" hidden></div><div class="caxis"><span>${us(pts[0][0])}</span><span>low ${money(mn)} · high ${money(mx)}</span><span>${us(pts[pts.length - 1][0])}</span></div>`;
+  const ch = (vs[vs.length - 1] / vs[0] - 1) * 100;
+  chg.innerHTML = `<span class="tr ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${Math.abs(ch).toFixed(1)}%</span>`;
+  const svg = body.querySelector('svg'), tip = body.querySelector('.ctip'), cx = svg.querySelector('.cx');
+  svg.onpointermove = e => { const r = svg.getBoundingClientRect(), i = Math.max(0, Math.min(pts.length - 1, Math.round((e.clientX - r.left) / r.width * (pts.length - 1))));
+    cx.setAttribute('x1', X(i)); cx.setAttribute('x2', X(i)); cx.setAttribute('opacity', 1); tip.hidden = false; tip.textContent = `${us(pts[i][0])} · ${money(pts[i][1])}`; };
+  svg.onpointerleave = () => { cx.setAttribute('opacity', 0); tip.hidden = true; };
+}
+// big card view: tilt, shine, price + history chart, and a link to every printing of that Pokémon
 function openCard(c) {
+  if (c.hit == null) c.hit = hitRank(c.r || '');
   let lb = $('#cardLB'); if (!lb) { lb = document.createElement('div'); lb.id = 'cardLB'; lb.className = 'lb'; document.body.appendChild(lb); }
   const k = K(), sp = c.dex && k.SPECIES[c.dex - 1];
   lb.innerHTML = `<div class="lbin" style="--hc:${HIT_C[c.hit] || HIT_C[0]}">
     <button class="x lbx" aria-label="Close">×</button>
-    <div class="lbcard h${c.hit}">${c.img ? `<img src="${c.img}/high.webp" alt="${esc(c.n)}" onerror="this.src='${c.img}/low.webp'">` : '<div class="lbph">Picture coming soon</div>'}<span class="lbshine"></span></div>
+    <div class="lbcard h${c.hit}">${c.img ? `<img src="${c.img}/high.webp" alt="${esc(c.n)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${c.img}/low.webp'}else{this.parentNode.insertAdjacentHTML('afterbegin','<div class=lbph>Picture coming soon</div>');this.remove()}">` : '<div class="lbph">Picture coming soon</div>'}<span class="lbshine"></span></div>
     <div class="lbinfo"><h2>${esc(c.n)}</h2><div class="muted">${esc(c.set)} · #${esc(c.num)}</div>
       <div class="lbr"><span class="rpill" style="background:${HIT_C[c.hit] || '#6B7280'}">${esc(c.r) || 'Unknown rarity'}</span>${status(c)}</div>
       <div class="lbp"><small>Market price</small><b>${money(c.usd)}</b>${pct(c.t)}</div>
+      <div class="lbchart"><div class="chead"><small>Price history</small><span class="cchg"></span></div>
+        <div class="rng">${[['1w', '1W'], ['1m', '1M'], ['ytd', 'YTD'], ['1y', '1Y'], ['all', 'All']].map(([r, l]) => `<button data-r="${r}" class="${r === '1y' ? 'on' : ''}">${l}</button>`).join('')}</div>
+        <div class="cbody"><span class="spin"></span></div></div>
       ${sp ? `<button class="primary lbw" data-dex="${c.dex}">See every ${esc(sp.name)} printing →</button>` : ''}</div></div>`;
   lb.classList.add('on'); document.body.style.overflow = 'hidden';
+  const cbox = lb.querySelector('.lbchart'), sid = String(c.id).slice(0, String(c.id).lastIndexOf('-'));
+  loadHistory(sid).then(h => { drawChart(cbox, h, c.num, '1y');
+    cbox.querySelector('.rng').onclick = e => { const b = e.target.closest('[data-r]'); if (!b) return; cbox.querySelectorAll('.rng button').forEach(x => x.classList.toggle('on', x === b)); drawChart(cbox, h, c.num, b.dataset.r); }; });
   const card = lb.querySelector('.lbcard');
   lb.onpointermove = e => { if (e.pointerType !== 'mouse') return; const r = card.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
     card.style.transform = `perspective(900px) rotateY(${x * 18}deg) rotateX(${-y * 18}deg)`; card.style.setProperty('--mx', (x + .5) * 100 + '%'); };
@@ -81,6 +124,6 @@ function openCard(c) {
   lb.onclick = e => { if (e.target === lb || e.target.closest('.lbx')) close(); const w = e.target.closest('.lbw'); if (w) { close(); k.openWheel(k.SPECIES[+w.dataset.dex - 1]); } };
   document.addEventListener('keydown', function esc2(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); } });
 }
-window.PKP = { render };
+window.PKP = { render, openCard, hitRank };
 if (document.querySelector('#v-packs.on')) render();
 })();

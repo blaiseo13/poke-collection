@@ -61,6 +61,18 @@ const r2 = x => Math.round(x * 100) / 100;
 window.PK_PACKS = ${JSON.stringify(packs)};
 `);
   console.log('packs:', packs.sets.reduce((a, s) => a + s.cards.length, 0), 'cards');
+  // price history: one file per pack, one price per card per day (charts grow from the first run)
+  const hdir = path.join(__dirname, '..', 'data', 'history'); fs.mkdirSync(hdir, { recursive: true });
+  for (const s of sets) {
+    const f = path.join(hdir, s.id + '.json'); let h = { dates: [], p: {} };
+    try { h = JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) {}
+    if (h.dates[h.dates.length - 1] === today) continue;
+    h.dates.push(today); const n = h.dates.length;
+    (s.allRows || []).forEach(c => { const k = String(c.num); if (!h.p[k]) h.p[k] = Array(n - 1).fill(null); h.p[k].push(c.usd || null); });
+    Object.keys(h.p).forEach(k => { while (h.p[k].length < n) h.p[k].push(null); });
+    fs.writeFileSync(f, JSON.stringify(h));
+  }
+  console.log('history: recorded', today, 'for', sets.length, 'packs');
   const file = path.join(__dirname, '..', 'data', 'trending.js');
   fs.writeFileSync(file, `// Built ${today} by tools/trending.js (TCGdex: TCGplayer market USD; momentum = Cardmarket 7-day vs 30-day avg)\nwindow.PK_TREND = ${JSON.stringify(out)};\n`);
   console.log('wrote', file, 'sets', out.sets.length, 'gains', gains.length, 'drops', drops.length);

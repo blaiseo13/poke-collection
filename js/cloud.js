@@ -1,5 +1,5 @@
 // Firebase: everyone reads the binders live; a device opened once with the private edit link (#edit-<key>) can edit.
-// Data: binders/<id> {name, createdAt, owned:{dex:[form, cardId|null]}, toFile:[dex], want:[dex]}, box/main {items}, prefs/main {favs}.
+// Data: binders/<id> {name, createdAt, owned:{dex:[form, cardId|null]}, toFile:[dex], want:[dex]}, box/main {items}, prefs/main {favs, goals:{dex:[tier, cardId]}}.
 (() => {
 'use strict';
 const cfg = window.FIREBASE_CONFIG, fb = window.firebase;
@@ -16,7 +16,10 @@ const serBinder = b => ({ name: b.name || 'Binder', createdAt: b.createdAt || ''
   want: (b.want || []).map(Number) });
 const serBox = items => (items || []).map(x => ({ id: x.id || x.card, dex: +x.dex, t: x.t ?? null }));
 const localBooks = () => { const S = K().S; return JSON.stringify(Object.keys(S.binders).sort().map(id => [id, serBinder(S.binders[id])])); };
-const remote = { books: null, box: null, favs: null };
+const remote = { books: null, box: null, favs: null, goals: null };
+// prefs/main = { favs:[dex], goals:{dex:[tier, cardId]} } — compared/written as one canonical string so nothing loops or rolls back
+const normGoals = g => Object.fromEntries(Object.entries(g || {}).filter(([, v]) => Array.isArray(v) && v[1]).map(([d, v]) => [String(d), [Number(v[0]) || 0, String(v[1])]]).sort((a, b) => +a[0] - +b[0]));
+const serPrefs = (favs, goals) => JSON.stringify({ f: [...favs].map(Number).sort((a, b) => a - b), g: normGoals(goals) });
 const pushed = {};
 
 function apply() {
@@ -24,16 +27,16 @@ function apply() {
   const rb = JSON.stringify(remote.books.slice().sort((a, b) => a.id < b.id ? -1 : 1).map(b => [b.id, serBinder(b)]));
   const sameBooks = rb === localBooks();
   const sameBox = remote.box == null || JSON.stringify(serBox(remote.box)) === JSON.stringify(serBox(k.S.box));
-  const sameFavs = remote.favs == null || JSON.stringify(remote.favs.slice().sort((a, b) => a - b)) === JSON.stringify([...k.FAVS].sort((a, b) => a - b));
-  if (sameBooks && sameBox && sameFavs) return;
-  k.applyCloud(remote.books, remote.box, remote.favs);
+  const samePrefs = remote.favs == null || serPrefs(remote.favs, remote.goals) === serPrefs(k.FAVS, k.GOALS);
+  if (sameBooks && sameBox && samePrefs) return;
+  k.applyCloud(remote.books, remote.box, remote.favs, remote.goals);
 }
 db.collection('binders').onSnapshot(s => { if (s.metadata.hasPendingWrites) return; const all = s.docs.map(d => ({ id: d.id, ...d.data() }));
   remote.books = all.filter(b => b.game !== 'onepiece'); remote.books.forEach(b => pushed['binders/' + b.id] = JSON.stringify(serBinder(b))); apply();
   // One Piece binder lives in the same collection as binders/op-main
   const op = all.find(b => b.game === 'onepiece'); if (op) { const j = JSON.stringify(normOP(op.owned)); pushed['binders/op-main'] = j; if (window.PKOP && JSON.stringify(normOP(PKOP.owned)) !== j) PKOP.applyCloud(op); } }, () => { K().toast('Can’t reach your collection right now. Changes on this device won’t save until it reconnects.', '#DC2626'); });
 db.doc('box/main').onSnapshot(s => { if (s.metadata.hasPendingWrites || !s.exists) return; remote.box = s.data().items || []; pushed['box/main'] = JSON.stringify(serBox(remote.box)); apply(); }, () => {});
-db.doc('prefs/main').onSnapshot(s => { if (s.metadata.hasPendingWrites || !s.exists) return; remote.favs = (s.data().favs || []).map(Number); pushed['prefs/main'] = JSON.stringify(remote.favs.slice().sort((a, b) => a - b)); apply(); }, () => {});
+db.doc('prefs/main').onSnapshot(s => { if (s.metadata.hasPendingWrites) return; if (!s.exists) { remote.favs = []; remote.goals = {}; pushed['prefs/main'] = serPrefs([], {}); return; } const d = s.data(); remote.favs = (d.favs || []).map(Number); remote.goals = normGoals(d.goals); pushed['prefs/main'] = serPrefs(remote.favs, remote.goals); apply(); }, () => {});
 
 // editor: write whatever changed, a moment after the last tap
 let t = null;
@@ -46,7 +49,8 @@ function push() {
     Object.keys(S.binders).forEach(id => { const j = JSON.stringify(serBinder(S.binders[id])); if (pushed['binders/' + id] !== j) { pushed['binders/' + id] = j; const body = JSON.parse(j);
       db.doc('binders/' + id).set(body).catch(fail); const i = remote.books.findIndex(b => b.id === id); if (i >= 0) remote.books[i] = { id, ...body }; else remote.books.push({ id, ...body }); } });
     const bj = JSON.stringify(serBox(S.box)); if (pushed['box/main'] !== bj) { pushed['box/main'] = bj; remote.box = JSON.parse(bj); db.doc('box/main').set({ items: JSON.parse(bj) }).catch(fail); }
-    const fj = JSON.stringify([...k.FAVS].map(Number).sort((a, b) => a - b)); if (pushed['prefs/main'] !== fj) { pushed['prefs/main'] = fj; remote.favs = JSON.parse(fj); db.doc('prefs/main').set({ favs: JSON.parse(fj) }).catch(fail); }
+    // never write prefs before the cloud copy has arrived (a fresh device must not wipe goals/favs)
+    const pj = serPrefs(k.FAVS, k.GOALS); if (remote.favs != null && pushed['prefs/main'] !== pj) { pushed['prefs/main'] = pj; const o = JSON.parse(pj); remote.favs = o.f; remote.goals = o.g; db.doc('prefs/main').set({ favs: o.f, goals: o.g }).catch(fail); }
   }, 700);
 }
 function fail() { K().toast('Couldn’t save that change. Check your connection.', '#DC2626'); }

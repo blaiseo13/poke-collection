@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
 <script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
-<link rel="manifest" href="manifest.webmanifest?v=37">
-<link rel="icon" href="icons/favicon-64.png?v=37" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=37">
+<link rel="manifest" href="manifest.webmanifest?v=38">
+<link rel="icon" href="icons/favicon-64.png?v=38" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=38">
 <meta name="theme-color" content="#F8F9FA">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -847,6 +847,35 @@ body.game-op #tabs button[data-v="best"]{display:none}
 .bsin h4{margin:4px 0 0;font-size:13px}
 .bslist{display:grid;gap:6px}.bsrow{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--border);border-radius:8px;padding:8px 10px}.bsrow span{display:grid}.bsrow small{font-size:11px}
 @media (max-width:760px){.bbpages{grid-template-columns:1fr}.bsheet{place-items:end center;padding:0}.bsin{width:100%;border-radius:14px 14px 0 0;max-height:80vh}}
+/* Need list + card ladders */
+.needlist .lchips{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0 4px}
+.nlist{display:grid;gap:8px}
+.nrow{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--border);border-radius:10px;padding:8px 10px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.nrow:hover{box-shadow:0 4px 14px rgba(0,0,0,.08);transform:translateY(-1px)}
+.nrow.goal{border-color:#F59E0B;box-shadow:0 0 0 1px #FDE68A inset}.nrow.best{opacity:.92}
+.nimg{width:58px;aspect-ratio:63/88;object-fit:cover;border-radius:4px;background:#F3F4F6;flex:none}.nimg.sm{width:42px;opacity:.85}
+.pair{display:flex;align-items:center;gap:4px;flex:none}.arr{color:var(--text3);font-weight:800}
+.ninfo{flex:1;min-width:0;display:grid;gap:3px}.nrow .ninfo .nn{display:flex;gap:6px;align-items:baseline;justify-content:flex-start}.ninfo .nn span{color:var(--text3);font-size:12px}
+.nsub{font-size:12px;color:var(--text2);display:flex;gap:5px;align-items:center;flex-wrap:wrap}.np{color:var(--text);font-weight:700}
+.tpill{font-size:10.5px;font-weight:700;color:#fff;background:var(--tc);border-radius:999px;padding:1px 7px;white-space:nowrap}
+.gtag{font-size:10.5px;font-weight:800;color:#92400E;background:#FEF3C7;border-radius:999px;padding:1px 7px}
+.bis{font-size:11px;font-weight:800;color:#92400E;background:linear-gradient(90deg,#FDE68A,#FBBF24);border-radius:999px;padding:1px 8px}
+.nact{display:flex;align-items:center;gap:8px;flex:none}.nact .gotit{width:auto;margin:0;padding:6px 10px}.chev{color:var(--text3);font-size:22px;flex:none}
+.bisbar{width:100%;margin-top:14px;border:1px solid #FCD34D;background:#FFFBEB;color:#92400E;border-radius:10px;padding:10px;font-weight:800;cursor:pointer}
+.lsheet{position:fixed;inset:0;background:rgba(17,24,39,.6);display:none;align-items:center;justify-content:center;z-index:300;padding:16px}.lsheet.on{display:flex}
+.lin{background:#fff;border-radius:14px;width:min(1100px,100%);max-height:92vh;overflow:auto;padding:16px}
+.lhd{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.lhd h2{margin:0;font-size:20px}
+.lx{border:0;background:#F3F4F6;border-radius:999px;width:40px;height:40px;font-size:18px;cursor:pointer;flex:none}
+.lrow{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 2px 6px}
+.rung{flex:0 0 200px;scroll-snap-align:center;border:1px solid var(--border);border-radius:12px;padding:10px;display:grid;gap:6px;align-content:start;background:#FAFAFA}
+.rung.have{border:2px solid #10B981;background:#ECFDF5}.rung.done{opacity:.75}.rung.top{background:linear-gradient(180deg,#FFFBEB,#fff)}.rung.goal{border:2px solid #F59E0B}
+.rtop{display:flex;gap:4px;flex-wrap:wrap;align-items:center;min-height:22px}.rtag{font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 7px}.rtag.you{background:#10B981;color:#fff}.rtag.nx{background:#E0E7FF;color:#3730A3}.rtag.bis{background:#FBBF24;color:#78350F}
+.rimg{width:100%;aspect-ratio:63/88;object-fit:cover;border-radius:8px;cursor:zoom-in;background:#F3F4F6}
+.rname{font-size:12px;color:var(--text2)}.rprice{font-size:13px}
+.more summary{font-size:12px;color:var(--accent);cursor:pointer}.alts{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px}.alts img{width:100%;border-radius:3px;cursor:pointer;opacity:.8}.alts img.on{outline:2px solid var(--accent);opacity:1}
+.gbtn{border:1px solid #FCD34D;background:#FFFBEB;color:#92400E;border-radius:8px;padding:8px;font-weight:800;cursor:pointer;min-height:40px}.gbtn.on{background:#F59E0B;color:#fff;border-color:#F59E0B}
+#lzoom{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:400;padding:16px}#lzoom.on{display:flex}#lzoom img{max-width:100%;max-height:92vh;border-radius:14px}
+@media (max-width:760px){.lsheet{padding:0;align-items:flex-end}.lin{border-radius:14px 14px 0 0;max-height:90vh}.rung{flex-basis:72%}.nimg{width:52px}.nimg.sm{width:36px}}
 </style>
 </head>
 <body class="viewonly">
@@ -978,10 +1007,10 @@ body.game-op #tabs button[data-v="best"]{display:none}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=37"></script>
-<script src="data/my-collection.js?v=37"></script>
-<script src="data/sync.js?v=37"></script>
-<script src="js/binder.js?v=37"></script>
+<script src="data/cards.js?v=38"></script>
+<script src="data/my-collection.js?v=38"></script>
+<script src="data/sync.js?v=38"></script>
+<script src="js/binder.js?v=38"></script>
 <script>
 (() => {
 'use strict';
@@ -1102,6 +1131,8 @@ const logMove = (dex, text, t) => { S.log.unshift({ dex, text, t, at: Date.now()
 const ownedOf = dex => S.owned[dex];
 const WANT = new Set((S.binders[S.cur].want || []).map(Number));
 let FAVS; try { FAVS = new Set(JSON.parse(localStorage.getItem('pkc.favs')) || []); } catch (e) { FAVS = new Set(); }
+// goals: { dex: [tier, cardId] } (Need tab ladders), synced in prefs/main.goals
+let GOALS; try { GOALS = JSON.parse(localStorage.getItem('pkc.goals')) || {}; } catch (e) { GOALS = {}; }
 const saveFavs = () => { try { localStorage.setItem('pkc.favs', JSON.stringify([...FAVS])); } catch (e) {} window.PKCloud && PKCloud.push(); };
 function displayCard(sp) {
   const o = ownedOf(sp.dex);
@@ -1583,7 +1614,7 @@ function binderAction(act) {
 }
 function setEditor(on) { EDITOR = !!on; document.body.classList.toggle('viewonly', !EDITOR); $('#editChip').hidden = !EDITOR; fillBinderSel(); if (EDITOR) toast('✏️ Editing is on for this device', '#059669'); }
 // live data from Firebase replaces the local copy (any device's change shows up here)
-function applyCloud(books, box, favs) {
+function applyCloud(books, box, favs, goals) {
   const keep = S.cur, nb = {};
   (books || []).forEach(bk => { const owned = {}; Object.entries(bk.owned || {}).forEach(([d, v]) => { owned[d] = { t: v[0] || 0, c: v[1] || null, at: 0 }; });
     const prev = S.binders[bk.id] || {}; nb[bk.id] = { name: bk.name, createdAt: bk.createdAt || '', owned, toFile: Object.fromEntries((bk.toFile || []).map(d => [d, 1])), filed: prev.filed || {}, removed: prev.removed || {}, want: (bk.want || []).map(Number) }; });
@@ -1591,26 +1622,28 @@ function applyCloud(books, box, favs) {
   S.binders = nb; if (SYNC) S.syncedAt = SYNC.syncedAt;
   if (box) S.box = cleanBox(box);
   if (favs) { FAVS.clear(); favs.forEach(d => FAVS.add(Number(d))); try { localStorage.setItem('pkc.favs', JSON.stringify([...FAVS])); } catch (e) {} }
+  if (goals) { Object.keys(GOALS).forEach(d => delete GOALS[d]); Object.entries(goals).forEach(([d, g]) => { if (Array.isArray(g) && g[1]) GOALS[d] = [Number(g[0]) || 0, g[1]]; }); try { localStorage.setItem('pkc.goals', JSON.stringify(GOALS)); } catch (e) {} }
   useBinder(nb[keep] ? keep : Object.keys(nb)[0]); WANT.clear(); (S.binders[S.cur].want || []).forEach(d => WANT.add(Number(d)));
   fillBinderSel(); save(); renderGrid(); const on = curView(); if (on !== 'collection') showView(on, false);
   if ($('#modal').classList.contains('on')) { renderArena(W.sp); go(W.idx); }
 }
-window.PKC = { tierOfRarity, cardPoints, binderPoints, applyCloud, setEditor, FAVS, S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
+window.PKC = { tierOfRarity, cardPoints, binderPoints, applyCloud, setEditor, FAVS, GOALS, S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
 renderGrid(); placePill(); window.PKX && PKX.start(); if (GAME === 'op') setTimeout(() => setGame('op'), 0);
 { const v0 = (location.hash || '').slice(1); history.replaceState({ v: v0 || 'collection' }, ''); if (v0 && v0 !== 'collection') showView(v0, false); }
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=37"></script>
-<script src="data/trending.js?v=37"></script>
-<script src="js/trending.js?v=37"></script>
-<script src="js/packs.js?v=37"></script>
-<script src="js/best.js?v=37"></script>
-<script src="js/onepiece.js?v=37"></script>
+<script src="js/ladder.js?v=38"></script>
+<script src="js/extras.js?v=38"></script>
+<script src="data/trending.js?v=38"></script>
+<script src="js/trending.js?v=38"></script>
+<script src="js/packs.js?v=38"></script>
+<script src="js/best.js?v=38"></script>
+<script src="js/onepiece.js?v=38"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=37"></script>
-<script src="js/cloud.js?v=37"></script>
+<script src="data/firebase-config.js?v=38"></script>
+<script src="js/cloud.js?v=38"></script>
 </body>
 </html>

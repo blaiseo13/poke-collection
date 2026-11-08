@@ -40,7 +40,7 @@ function needAnswer(raw) {
   const k = K(); if (!raw) return '';
   const q = raw.trim(), ql = q.toLowerCase(), qn = q.replace(/^#/, '');
   const status = sp => { const o = k.ownedOf(sp.dex);
-    return o ? `<span class="ans have">✓ You have it</span><small>${k.TIERS[o.t].l}${o.c ? ' · ' + esc(k.BY_ID.get(o.c).set) + ' #' + esc(k.BY_ID.get(o.c).num) : ' · printing not set'}${k.S.toFile[sp.dex] ? ' · waiting to be filed' : ''}</small>`
+    return o ? `<span class="ans have">✓ You have it</span><small>${k.TIERS[o.t].l}${o.c ? ' · ' + esc(k.BY_ID.get(o.c).set) + ' #' + esc(k.BY_ID.get(o.c).num) : ' · printing not set'}${k.S.toFile[sp.dex] ? ' · not in your binder' : ' · 📒 in your binder'}</small>`
       : `<span class="ans need">✗ You need it</span><small>${k.WANT.has(sp.dex) ? 'On your want list · ' : ''}${sp.cards.length} printings exist</small>`; };
   const rows = [], seen = new Set();
   const addSp = sp => { if (sp && !seen.has(sp.dex)) { seen.add(sp.dex); rows.push(`<button class="ansrow ${k.ownedOf(sp.dex) ? 'have' : 'need'}" data-open="${sp.dex}"><img src="${sp.basic.img}" alt="" loading="lazy"><div><b>${esc(sp.name)}</b> <span class="muted">#${pad(sp.dex)}</span><div>${status(sp)}</div></div></button>`); } };

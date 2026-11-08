@@ -647,6 +647,18 @@ body.quick .quickbar{display:flex}
 .grid.quick .qt.on img{filter:none;opacity:1}
 .grid.quick .qt.on .qn{color:var(--text)}
 .grid.quick .qt.on .qc{background:var(--green);border-color:var(--green)}
+/* ---------- three states: in binder / owned (not in binder) / not owned ---------- */
+.pill.own{background:var(--accent)}
+.grid.quick .qt.own{border-color:var(--accent);background:#EEF2FF}
+.grid.quick .qt.own img{filter:none;opacity:1}
+.grid.quick .qt.own .qn{color:var(--text)}
+.grid.quick .qt.own .qc{background:var(--accent);border-color:var(--accent)}
+.grid.quick .qt .qs{font:800 9px Inter,system-ui,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--text3)}
+.grid.quick .qt.on .qs{color:var(--green)}.grid.quick .qt.own .qs{color:var(--accent)}
+.filetag.out{background:var(--accent);font-size:9px}
+.qlegend{display:inline-flex;gap:10px;flex-wrap:wrap;font-weight:700}
+.qlegend i{font-style:normal;padding:1px 8px;border-radius:99px;color:#fff}
+
 .grid.quick .qt.pop{animation:qpop .28s cubic-bezier(.2,1.6,.4,1)}
 @keyframes qpop{50%{transform:scale(1.08)}}
 @media (max-width:760px){.grid.quick{grid-template-columns:repeat(4,1fr);gap:6px}.grid.quick .qt img{width:54px;height:54px}}
@@ -733,7 +745,7 @@ body.quick .quickbar{display:flex}
 <main>
   <section class="view on" id="v-collection">
     <div class="kpis" id="kpis"></div>
-    <div class="quickbar" id="quickBar"><span>✅ <b>Quick edit is on.</b> Tap a Pokémon to mark it owned or not owned. Every tap saves.</span><span class="qcount" id="quickCount"></span></div>
+    <div class="quickbar" id="quickBar"><span>✅ <b>Quick edit:</b> tap to cycle <span class="qlegend"><i style="background:var(--green)">📒 In binder</i>→<i style="background:var(--accent)">✓ Owned</i>→<i style="background:#9CA3AF">✗ Not owned</i></span> Every tap saves.</span><span class="qcount" id="quickCount"></span></div>
     <div class="filters">
       <button class="quickbtn" id="quickBtn" type="button" aria-pressed="false">✅ Quick edit</button>
       <div class="chips" id="genChips"></div>
@@ -807,10 +819,10 @@ body.quick .quickbar{display:flex}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=22"></script>
-<script src="data/my-collection.js?v=22"></script>
-<script src="data/sync.js?v=22"></script>
-<script src="js/binder.js?v=22"></script>
+<script src="data/cards.js?v=23"></script>
+<script src="data/my-collection.js?v=23"></script>
+<script src="data/sync.js?v=23"></script>
+<script src="js/binder.js?v=23"></script>
 <script>
 (() => {
 'use strict';
@@ -966,7 +978,7 @@ function chipRow(el, items, get, set) {
     el.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); renderGrid(); };
 }
 chipRow($('#genChips'), [[-1,'All gens'], ...GENS.map((g,i) => [i, 'Gen ' + ROMAN[i]])], () => UI.gen, v => UI.gen = v);
-chipRow($('#showChips'), [['all','All'],['owned','Owned'],['missing','Missing'],['fav','♥ Favorites'],['want','Want list'],['tofile','To file'],['unpicked','Printing not set']], () => UI.show, v => UI.show = v);
+chipRow($('#showChips'), [['all','All'],['owned','Owned'],['binder','📒 In binder'],['tofile','Not in binder'],['missing','Not owned'],['fav','♥ Favorites'],['want','Want list'],['unpicked','Printing not set']], () => UI.show, v => UI.show = v);
 $('#tierSel').innerHTML = '<option value="-1">Any form</option>' + TIERS.map((t,i) => `<option value="${i}">${t.l}</option>`).join('');
 $('#tierSel').onchange = e => { UI.tier = +e.target.value; renderGrid(); };
 $('#sortSel').onchange = e => { UI.sort = e.target.value; renderGrid(); };
@@ -991,7 +1003,7 @@ function renderKpis() {
   if (!k.children.length) k.innerHTML = [
     ['Owned','owned','var(--accent)'],['Complete','pct','var(--green)'],['Holo or better','holo','var(--t4)'],['Still missing','miss','var(--red)']
   ].map(([l,id,c],i) => `<div class="kpi" style="--c:${c};animation-delay:${i*60}ms"><div class="lab">${l}</div><div class="val" id="k-${id}">0</div><div class="sub" id="ks-${id}"></div><div class="bar" id="kb-${id}"></div></div>`).join('');
-  countUp($('#k-owned'), s.owned); $('#ks-owned').textContent = `of ${s.total.toLocaleString()} · ${Object.keys(S.toFile).length} to file`;
+  countUp($('#k-owned'), s.owned); $('#ks-owned').textContent = `of ${s.total.toLocaleString()} · ${s.owned - Object.keys(S.toFile).filter(d => S.owned[d]).length} in binder`;
   $('#k-pct').textContent = (pct > 0 && pct < 10 ? pct.toFixed(1) : Math.round(pct)) + '%'; $('#ks-pct').textContent = 'of the whole Pokédex';
   countUp($('#k-holo'), s.holoPlus); $('#ks-holo').textContent = `${s.tiers[5]} secret / illustration`;
   countUp($('#k-miss'), s.total - s.owned); $('#ks-miss').textContent = 'shown in their coolest form';
@@ -1011,6 +1023,7 @@ function filtered() {
     if (UI.show === 'missing' && o) return false;
     if (UI.show === 'want' && (o || !WANT.has(sp.dex))) return false;
     if (UI.show === 'tofile' && !(o && S.toFile[sp.dex])) return false;
+    if (UI.show === 'binder' && !(o && !S.toFile[sp.dex])) return false;
     if (UI.show === 'unpicked' && !(o && !o.c)) return false;
     if (UI.show === 'fav' && !FAVS.has(sp.dex)) return false;
     if (UI.tier >= 0 && (!o || o.t !== UI.tier)) return false;
@@ -1023,8 +1036,8 @@ function filtered() {
   if (by) list = list.slice().sort((a,b) => by(a,b) || a.dex - b.dex);
   return list;
 }
-function quickTile(sp) { const o = ownedOf(sp.dex);
-  return `<div class="tile qt${o ? ' on' : ''}" data-dex="${sp.dex}" role="checkbox" aria-checked="${!!o}" tabindex="0"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${sp.dex}.png" alt=""><span class="qn">${sp.name}</span><span class="qd">#${String(sp.dex).padStart(3, '0')}</span><span class="qc">${o ? '✓' : ''}</span></div>`; }
+function quickTile(sp) { const o = ownedOf(sp.dex), inB = o && !S.toFile[sp.dex];
+  return `<div class="tile qt${inB ? ' on' : o ? ' own' : ''}" data-dex="${sp.dex}" role="button" aria-label="${sp.name}: ${inB ? 'in binder' : o ? 'owned, not in binder' : 'not owned'}" tabindex="0"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${sp.dex}.png" alt=""><span class="qn">${sp.name}</span><span class="qd">#${String(sp.dex).padStart(3, '0')}</span><span class="qs">${inB ? '📒 In binder' : o ? '✓ Owned' : 'Not owned'}</span><span class="qc">${o ? '✓' : ''}</span></div>`; }
 function tileHTML(sp, i) {
   if (UI.quick) return quickTile(sp);
   const o = ownedOf(sp.dex), c = displayCard(sp), nt = nextTier(sp);
@@ -1032,11 +1045,11 @@ function tileHTML(sp, i) {
   const badge = o ? TIERS[o.t] : null, nxt = nt != null ? TIERS[nt] : null;
   return `<div class="tile ${o ? 'owned t' + o.t + (S.toFile[sp.dex] ? ' tofile' : '') : 'missing' + (WANT.has(sp.dex) ? ' want' : '')}" data-dex="${sp.dex}" style="--tc:${tc};--dl:${Math.min(i, 24) * 28}ms">
     <div class="card3d"><img decoding="async" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${c.img}" alt="${sp.name}" data-dex="${sp.dex}"><div class="foil"></div><div class="glare"></div>
-      <div class="ribbon">${WANT.has(sp.dex) ? 'WANT' : 'MISSING'}</div>${o && S.toFile[sp.dex] ? '<div class="filetag">TO FILE</div>' : ''}<div class="cool">Coolest: ${TIERS[sp.coolest.tier].l}</div>${FAVS.has(sp.dex) ? '<span class="favmark" title="Favorite">♥</span>' : ''}${window.PKX ? PKX.tileExtra(sp, o) : ''}</div>
+      <div class="ribbon">${WANT.has(sp.dex) ? 'WANT' : 'MISSING'}</div>${o && S.toFile[sp.dex] ? '<div class="filetag out">NOT IN BINDER</div>' : ''}<div class="cool">Coolest: ${TIERS[sp.coolest.tier].l}</div>${FAVS.has(sp.dex) ? '<span class="favmark" title="Favorite">♥</span>' : ''}${window.PKX ? PKX.tileExtra(sp, o) : ''}</div>
     <div class="meta"><span class="tdot"></span><span class="nm">${sp.name}</span><span class="num">#${String(sp.dex).padStart(3,'0')}</span></div>
-    <div class="status">${o ? `<span class="pill have">✓ Have</span><span class="badge" style="--bc:${badge.c}">${badge.l}</span>` : WANT.has(sp.dex) ? '<span class="pill want">★ Want</span><span class="pill need">✗ Need</span>' : '<span class="pill need">✗ Need</span>'}</div>
+    <div class="status">${o ? `${S.toFile[sp.dex] ? '<span class="pill own">✓ Owned</span>' : '<span class="pill have">📒 In binder</span>'}<span class="badge" style="--bc:${badge.c}">${badge.l}</span>` : WANT.has(sp.dex) ? '<span class="pill want">★ Want</span><span class="pill need">✗ Need</span>' : '<span class="pill need">✗ Need</span>'}</div>
     <div class="acts">${o
-      ? `<button class="up" data-act="up" style="--nc:${nxt ? nxt.c : '#D97706'}" ${nxt ? '' : 'disabled'}>${nxt ? '⬆ ' + nxt.l : '★ Top form'}</button>${S.toFile[sp.dex] ? '<button class="fl" data-act="file" title="Mark as filed in your binder">📁</button>' : ''}<button class="dn" data-act="dn" title="Step down a form (or remove)">↓</button>`
+      ? `<button class="up" data-act="up" style="--nc:${nxt ? nxt.c : '#D97706'}" ${nxt ? '' : 'disabled'}>${nxt ? '⬆ ' + nxt.l : '★ Top form'}</button>${S.toFile[sp.dex] ? '<button class="fl" data-act="file" title="Put it in the binder">📒</button>' : ''}<button class="dn" data-act="dn" title="Step down a form (or remove)">↓</button>`
       : `<button class="got" data-act="got">+ I have it</button>`}</div>
   </div>`;
 }
@@ -1106,10 +1119,12 @@ function watchImgs() { imgScan = 0; document.querySelectorAll('img[data-src]:not
 new MutationObserver(() => { if (!imgScan) imgScan = requestAnimationFrame(watchImgs); }).observe(document.body, { childList: true, subtree: true });
 
 // Quick edit: one tap = owned / not owned (saved to Firebase on every tap)
-function quickCount() { const n = SPECIES.filter(sp => ownedOf(sp.dex)).length; const el = $('#quickCount'); if (el) el.textContent = `${n} owned in ${S.binders[S.cur].name}`; }
+function quickCount() { const n = SPECIES.filter(sp => ownedOf(sp.dex)).length, out = Object.keys(S.toFile).filter(d => S.owned[d]).length; const el = $('#quickCount'); if (el) el.textContent = `📒 ${n - out} in binder · ✓ ${out} owned elsewhere · ${n} owned`; }
 function quickToggle(dex) {
-  if (S.owned[dex]) { delete S.owned[dex]; S.removed[dex] = 1; delete S.toFile[dex]; }
-  else { S.owned[dex] = { t: 0, c: null, at: Date.now() }; delete S.removed[dex]; }
+  // cycle: in binder -> owned (not in binder) -> not owned -> in binder
+  if (S.owned[dex] && !S.toFile[dex]) { S.toFile[dex] = 1; }
+  else if (S.owned[dex]) { delete S.owned[dex]; delete S.toFile[dex]; S.removed[dex] = 1; }
+  else { S.owned[dex] = { t: 0, c: null, at: Date.now() }; delete S.toFile[dex]; delete S.removed[dex]; }
   save(); refreshTile(dex); const el = document.querySelector(`.tile[data-dex="${dex}"]`); el && el.classList.add('pop');
   renderKpis(); quickCount(); try { navigator.vibrate && navigator.vibrate(8); } catch (e) {}
 }
@@ -1188,7 +1203,7 @@ function renderInfo() {
   const pd = window.PKX && PKX.priceData ? PKX.priceData(c) : { loading: false };
   const total = SET_TOTAL[c.setId] || 0, hp = c.hp || 0;
   const ownHtml = mine && own.c ? `<div class="own gold"><b>★ This exact card is in your binder</b></div>`
-    : own ? `<div class="own have"><b>✓ You have ${sp.name}</b><span>${own.c ? 'A different printing' : 'Printing not set'}${c.tier > own.t ? ' · <em>this one would be an upgrade ⬆</em>' : ''}</span></div>`
+    : own ? `<div class="own have"><b>✓ You have ${sp.name} · ${S.toFile[sp.dex] ? 'not in your binder' : '📒 in your binder'}</b><span>${own.c ? 'A different printing' : 'Printing not set'}${c.tier > own.t ? ' · <em>this one would be an upgrade ⬆</em>' : ''}</span></div>`
     : `<div class="own need"><b>✗ You need this one</b><span>${WANT.has(sp.dex) ? 'On your want list' : 'Not in your binder yet'}</span></div>`;
   const stages = ['Basic', 'Stage 1', 'Stage 2'];
   const evo = c.stage === 3 ? `<div class="evo special"><span class="on">Special card</span></div>`
@@ -1390,14 +1405,14 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=22"></script>
-<script src="data/trending.js?v=22"></script>
-<script src="js/trending.js?v=22"></script>
-<script src="js/packs.js?v=22"></script>
+<script src="js/extras.js?v=23"></script>
+<script src="data/trending.js?v=23"></script>
+<script src="js/trending.js?v=23"></script>
+<script src="js/packs.js?v=23"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=22"></script>
-<script src="js/cloud.js?v=22"></script>
+<script src="data/firebase-config.js?v=23"></script>
+<script src="js/cloud.js?v=23"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
+<script>(function(){var h=location.hash;if(h.indexOf("#edit-")===0){try{localStorage.setItem("pkc.editKey",h.slice(6))}catch(e){}history.replaceState(null,"",location.pathname+location.search)}})();</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -40,6 +41,7 @@ header{position:sticky;top:0;z-index:20;background:rgba(248,249,250,.86);backdro
   background:linear-gradient(var(--red) 0 45%,var(--text) 45% 55%,#fff 55%);transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
 .ball::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#fff;border:2.5px solid var(--text)}
 .logo:hover .ball{transform:rotate(360deg)}
+.editchip{font:700 11px Inter;color:var(--green);background:#ECFDF5;border:1px solid #A7F3D0;border-radius:99px;padding:3px 9px;margin-left:6px;white-space:nowrap}
 .binderSel{font:600 14px Inter,system-ui,sans-serif;color:var(--accent);background:#EEF2FF;border:1px solid #C7D2FE;border-radius:8px;padding:5px 8px;margin-left:4px;max-width:200px;cursor:pointer}
 .ball.wiggle{animation:wiggle .9s ease}
 @keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-25deg)}40%{transform:rotate(20deg)}60%{transform:rotate(-12deg)}80%{transform:rotate(6deg)}}
@@ -634,7 +636,7 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
 <div class="bgballs" id="bgballs"></div>
 <header>
   <div class="hwrap">
-    <div class="logo"><div class="ball" id="logoBall"></div>Poké Collection<select id="binderSel" class="binderSel" aria-label="Binder" title="Switch binder"></select></div>
+    <div class="logo"><div class="ball" id="logoBall"></div>Poké Collection<select id="binderSel" class="binderSel" aria-label="Binder" title="Switch binder"></select><span class="editchip" id="editChip" hidden>✏️ Editing</span></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Search name or #number" autocomplete="off"><kbd>/</kbd>
@@ -721,10 +723,10 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=17"></script>
-<script src="data/my-collection.js?v=17"></script>
-<script src="data/sync.js?v=17"></script>
-<script src="js/binder.js?v=17"></script>
+<script src="data/cards.js?v=18"></script>
+<script src="data/my-collection.js?v=18"></script>
+<script src="data/sync.js?v=18"></script>
+<script src="js/binder.js?v=18"></script>
 <script>
 (() => {
 'use strict';
@@ -826,14 +828,14 @@ function useBinder(id) { S.cur = id; const b = S.binders[id]; BKEYS.forEach(k =>
 useBinder(S.cur);
 let saveT;
 const save = () => { clearTimeout(saveT); saveT = setTimeout(() => { const b = S.binders[S.cur]; BKEYS.forEach(k => b[k] = S[k]);
-  const out = Object.assign({}, S); BKEYS.forEach(k => delete out[k]); try { localStorage.setItem(KEY, JSON.stringify(out)); } catch (e) {} window.PKX && PKX.persist(); }, 150); };
+  const out = Object.assign({}, S); BKEYS.forEach(k => delete out[k]); try { localStorage.setItem(KEY, JSON.stringify(out)); } catch (e) {} window.PKX && PKX.persist(); window.PKCloud && PKCloud.push(); }, 150); };
 save();
 const logMove = (dex, text, t) => { S.log.unshift({ dex, text, t, at: Date.now() }); S.log = S.log.slice(0, 30); };
 
 const ownedOf = dex => S.owned[dex];
 const WANT = new Set((S.binders[S.cur].want || []).map(Number));
 let FAVS; try { FAVS = new Set(JSON.parse(localStorage.getItem('pkc.favs')) || []); } catch (e) { FAVS = new Set(); }
-const saveFavs = () => { try { localStorage.setItem('pkc.favs', JSON.stringify([...FAVS])); } catch (e) {} };
+const saveFavs = () => { try { localStorage.setItem('pkc.favs', JSON.stringify([...FAVS])); } catch (e) {} window.PKCloud && PKCloud.push(); };
 function displayCard(sp) {
   const o = ownedOf(sp.dex);
   if (!o) return sp.coolest;
@@ -1247,22 +1249,55 @@ if ($('#importFile')) $('#importFile').onchange = async e => { const f = e.targe
 $('#asof').textContent = '· Cards as of ' + fmtDate(D.sets.map(s => s[3]).sort().pop());
 // binder picker
 const EDIT_URL = 'https://claude.ai/artifact/WykFENqw79CJXP145FWu3N';
-function fillBinderSel() { const sel = $('#binderSel'); sel.innerHTML = Object.entries(S.binders).map(([id, b]) => `<option value="${id}"${id === S.cur ? ' selected' : ''}>${b.name.replace(/[<&]/g, '')}</option>`).join('')
-  + '<option disabled>──────────</option><option value="__new">＋ New binder…</option><option value="__edit">✎ Rename or edit binders…</option>'; }
+let EDITOR = false;
+function fillBinderSel() { const sel = $('#binderSel'); sel.innerHTML = Object.entries(S.binders).map(([id, b]) => `<option value="${id}"${id === S.cur ? ' selected' : ''}>${String(b.name).replace(/[<&]/g, '')}</option>`).join('')
+  + (EDITOR ? '<option disabled>──────────</option><option value="__rip">🎴 Rip a pack…</option><option value="__new">＋ New binder…</option><option value="__rename">✎ Rename this binder…</option><option value="__delete">🗑 Delete this binder…</option>' : ''); }
 fillBinderSel();
 $('#binderSel').onchange = e => {
-  if (e.target.value.startsWith('__')) { const hash = e.target.value === '__new' ? '#new-binder' : '#binders'; e.target.value = S.cur; window.open(EDIT_URL + hash, '_blank', 'noopener'); return; }
+  const act = e.target.value; if (act.startsWith('__')) { e.target.value = S.cur; binderAction(act); return; }
   const b = S.binders[S.cur]; BKEYS.forEach(k => b[k] = S[k]); useBinder(e.target.value);
   WANT.clear(); (S.binders[S.cur].want || []).forEach(d => WANT.add(Number(d))); save(); renderGrid();
   const on = $('#tabs button.on'); if (on && on.dataset.v !== 'collection') on.click(); toast('Showing ' + S.binders[S.cur].name, '#4F46E5'); };
-window.PKC = { S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
+// editing binders (only on devices opened with the private edit link)
+function switchTo(id) { const b = S.binders[S.cur]; if (b) BKEYS.forEach(k => b[k] = S[k]); useBinder(id); WANT.clear(); (S.binders[S.cur].want || []).forEach(d => WANT.add(Number(d))); fillBinderSel(); save(); renderGrid(); const on = curView(); if (on !== 'collection') showView(on, false); }
+function binderAction(act) {
+  const cur = S.binders[S.cur];
+  if (act === '__rip') { window.PKY && PKY.openRip(); return; }
+  if (act === '__new') { const name = (prompt('Name for the new binder', 'New binder') || '').trim(); if (!name) return;
+    const id = 'b' + Date.now().toString(36); S.binders[id] = { name, createdAt: new Date().toISOString(), owned: {}, toFile: {}, filed: {}, removed: {}, want: [] };
+    switchTo(id); toast(`“${name}” created. It starts empty.`, '#4F46E5'); return; }
+  if (act === '__rename') { const name = (prompt('Rename this binder', cur.name) || '').trim(); if (!name || name === cur.name) return; cur.name = name; fillBinderSel(); save(); toast('Renamed to ' + name, '#4F46E5'); return; }
+  if (act === '__delete') { if (Object.keys(S.binders).length < 2) { toast('Keep at least one binder', '#DC2626'); return; }
+    if (!confirm(`Delete “${cur.name}” and its ${Object.keys(S.owned).length} cards? This can’t be undone.`)) return;
+    const id = S.cur; delete S.binders[id]; window.PKCloud && PKCloud.removeBinder(id); switchTo(Object.keys(S.binders)[0]); toast('Binder deleted', '#DC2626'); }
+}
+function setEditor(on) { EDITOR = !!on; document.body.classList.toggle('viewonly', !EDITOR); $('#editChip').hidden = !EDITOR; fillBinderSel(); if (EDITOR) toast('✏️ Editing is on for this device', '#059669'); }
+// live data from Firebase replaces the local copy (any device's change shows up here)
+function applyCloud(books, box, favs) {
+  const keep = S.cur, nb = {};
+  (books || []).forEach(bk => { const owned = {}; Object.entries(bk.owned || {}).forEach(([d, v]) => { owned[d] = { t: v[0] || 0, c: v[1] && BY_ID.has(v[1]) ? v[1] : null, at: 0 }; });
+    const prev = S.binders[bk.id] || {}; nb[bk.id] = { name: bk.name, createdAt: bk.createdAt || '', owned, toFile: Object.fromEntries((bk.toFile || []).map(d => [d, 1])), filed: prev.filed || {}, removed: prev.removed || {}, want: (bk.want || []).map(Number) }; });
+  if (!Object.keys(nb).length) return;
+  S.binders = nb; if (SYNC) S.syncedAt = SYNC.syncedAt;
+  if (box) S.box = cleanBox(box);
+  if (favs) { FAVS.clear(); favs.forEach(d => FAVS.add(Number(d))); try { localStorage.setItem('pkc.favs', JSON.stringify([...FAVS])); } catch (e) {} }
+  useBinder(nb[keep] ? keep : Object.keys(nb)[0]); WANT.clear(); (S.binders[S.cur].want || []).forEach(d => WANT.add(Number(d)));
+  fillBinderSel(); save(); renderGrid(); const on = curView(); if (on !== 'collection') showView(on, false);
+  if ($('#modal').classList.contains('on')) { renderArena(W.sp); go(W.idx); }
+}
+window.PKC = { applyCloud, setEditor, FAVS, S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
 renderGrid(); placePill(); window.PKX && PKX.start();
 { const v0 = (location.hash || '').slice(1); history.replaceState({ v: v0 || 'collection' }, ''); if (v0 && v0 !== 'collection') showView(v0, false); }
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=17"></script>
-<script src="data/trending.js?v=17"></script>
-<script src="js/trending.js?v=17"></script>
+<script src="js/extras.js?v=18"></script>
+<script src="data/trending.js?v=18"></script>
+<script src="js/trending.js?v=18"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="data/firebase-config.js?v=18"></script>
+<script src="js/cloud.js?v=18"></script>
 </body>
 </html>

@@ -190,7 +190,7 @@ const PKX = window.PKX = {
 /* ---------- charts ---------- */
 function hbars(rows, opts = {}) {
   const max = Math.max(1, ...rows.map(r => r.v));
-  return `<div class="hb">${rows.map((r, i) => `<div class="hbr" data-tip="${esc(r.tip || r.l + ': ' + r.v)}">
+  return `<div class="hb">${rows.map((r, i) => `<div class="hbr${r.dex ? ' click' : ''}"${r.dex ? ` data-dex="${r.dex}" role="button" tabindex="0"` : ''} data-tip="${esc(r.tip || r.l + ': ' + r.v)}">
     ${r.img ? `<img src="${r.img}" alt="" loading="lazy">` : ''}<span class="hbl">${r.l}</span>
     <div class="hbt"><div class="hbf" style="--w:${r.v / max * 100}%;--c:${r.c || '#4F46E5'};transition-delay:${i * 40}ms"></div></div>
     <span class="hbv">${opts.fmt ? opts.fmt(r.v) : r.v.toLocaleString()}</span></div>`).join('')}</div>`;
@@ -225,7 +225,7 @@ function countTo(el) { const to = +el.dataset.to, fmt = el.dataset.fmt, t0 = per
   const f = v => fmt === 'money' ? money(v) : fmt === 'dec' ? v.toFixed(1) : Math.round(v).toLocaleString();
   const step = now => { const p = Math.min(1, (now - t0) / 1100), ez = 1 - Math.pow(1 - p, 3); el.textContent = f(to * ez); if (p < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
 const tile = (lab, val, fmt, sub, c) => `<div class="kpi" style="--c:${c || 'var(--accent)'}"><div class="lab">${lab}</div><div class="val" data-to="${val}" data-fmt="${fmt || ''}">0</div><div class="sub">${sub || ''}</div></div>`;
-const fact = (icon, lab, val, sub, img) => `<div class="fact">${img ? `<img src="${img}" alt="" loading="lazy">` : `<div class="fi">${icon}</div>`}<div><div class="lab">${lab}</div><div class="fv">${val}</div><div class="muted">${sub || ''}</div></div></div>`;
+const fact = (icon, lab, val, sub, img, dex) => `<div class="fact${dex ? ' click' : ''}"${dex ? ` data-dex="${dex}" role="button" tabindex="0"` : ''}>${img ? `<img src="${img}" alt="" loading="lazy">` : `<div class="fi">${icon}</div>`}<div><div class="lab">${lab}</div><div class="fv">${val}</div><div class="muted">${sub || ''}</div></div></div>`;
 function animateIn(root) { requestAnimationFrame(() => requestAnimationFrame(() => { root.classList.add('go'); root.querySelectorAll('[data-to]').forEach(countTo); })); }
 
 /* ---------- Binder Stats ---------- */
@@ -267,7 +267,7 @@ function renderStats() {
       ${tile('To file', Object.keys(S.toFile).length, '', 'waiting for the binder', '#6B7280')}
     </div>
     <div class="sgrid">
-      <div class="panel span2"><h3>Most valuable in your binder</h3>${valued.length ? hbars(valued.map(r => ({ l: r.sp.name + (r.picked ? '' : ' (est.)'), v: r.pr.v, img: r.c.img, tip: `<b>${esc(r.c.name)}</b><br>${esc(r.c.set)} #${r.c.num}<br>${money(r.pr.v)} · as of ${usDate(r.pr.u)}${r.picked ? '' : '<br>Estimate: printing not picked'}` })), { fmt: money }) : empty('Prices load in the background. This fills in a moment.')}</div>
+      <div class="panel span2"><h3>Most valuable in your binder</h3>${valued.length ? hbars(valued.map(r => ({ dex: r.sp.dex, l: r.sp.name + (r.picked ? '' : ' (est.)'), v: r.pr.v, img: r.c.img, tip: `<b>${esc(r.c.name)}</b><br>${esc(r.c.set)} #${r.c.num}<br>${money(r.pr.v)} · as of ${usDate(r.pr.u)}${r.picked ? '' : '<br>Estimate: printing not picked'}<br><i>Click to see it bigger</i>` })), { fmt: money }) : empty('Prices load in the background. This fills in a moment.')}</div>
       <div class="panel"><h3>Value over time</h3>${t.nEst ? '<div class="muted small">Binder includes estimates for unpicked printings</div>' : ''}${log.length === 1 ? `<div class="hero2"><div><div class="lab">Binder</div><div class="hv" style="color:#4F46E5">${money(log[0].binder)}</div></div><div><div class="lab">Box</div><div class="hv" style="color:#DB2777">${money(log[0].box)}</div></div></div><div class="muted" style="text-align:center">Tracking since ${usDate(log[0].d)}</div>` : log.length > 1 ? lineChart(log) + `<div class="legend"><div class="lg" style="--bc:#4F46E5"><i></i>Binder <span>${money(log[log.length - 1].binder)}</span></div><div class="lg" style="--bc:#DB2777"><i></i>Box <span>${money(log[log.length - 1].box)}</span></div></div>` : empty('First reading saves once prices load.')}</div>
       <div class="panel"><h3>Value by form</h3>${hbars(tierVal, { fmt: money })}${t.nEst ? '<div class="muted small" style="margin-top:10px">Includes estimates for unpicked printings</div>' : ''}</div>
       <div class="panel"><h3>Types in your binder</h3>${hbars(types)}</div>
@@ -284,9 +284,9 @@ function renderStats() {
       ${fact('🛤️', 'Laid end to end', `${(n * 0.088).toFixed(1)} m`, 'at 88 mm per card')}
       ${fact('⚖️', 'Binder weight (cards)', `${(n * 1.75 / 1000).toFixed(2)} kg`, '1.75 g per card')}
       ${fact('🔗', 'Longest Pokédex streak', `${best[0]} in a row`, best[0] ? `#${best[1]} ${k.SPECIES[best[1] - 1].name} → #${best[2]} ${k.SPECIES[best[2] - 1].name}` : '')}
-      ${topHP ? fact('', 'Highest HP', `${topHP.c.hp} HP`, `${topHP.sp.name}${topHP.picked ? '' : ' (default printing)'}`, topHP.c.img) : ''}
-      ${byDate[0] ? fact('', 'Oldest card', usDate(byDate[0].c.date), `${byDate[0].c.name} · ${byDate[0].c.set}`, byDate[0].c.img) : fact('🕰️', 'Oldest card', '–', 'pick printings to unlock')}
-      ${byDate.length ? fact('', 'Newest card', usDate(byDate[byDate.length - 1].c.date), `${byDate[byDate.length - 1].c.name} · ${byDate[byDate.length - 1].c.set}`, byDate[byDate.length - 1].c.img) : fact('✨', 'Newest card', '–', 'pick printings to unlock')}
+      ${topHP ? fact('', 'Highest HP', `${topHP.c.hp} HP`, `${topHP.sp.name}${topHP.picked ? '' : ' (default printing)'}`, topHP.c.img, topHP.sp.dex) : ''}
+      ${byDate[0] ? fact('', 'Oldest card', usDate(byDate[0].c.date), `${byDate[0].c.name} · ${byDate[0].c.set}`, byDate[0].c.img, byDate[0].sp.dex) : fact('🕰️', 'Oldest card', '–', 'pick printings to unlock')}
+      ${byDate.length ? fact('', 'Newest card', usDate(byDate[byDate.length - 1].c.date), `${byDate[byDate.length - 1].c.name} · ${byDate[byDate.length - 1].c.set}`, byDate[byDate.length - 1].c.img, byDate[byDate.length - 1].sp.dex) : fact('✨', 'Newest card', '–', 'pick printings to unlock')}
       ${fact('🎨', 'Top artist', artists[0] ? esc(artists[0][0]) : '–', artists[0] ? `${artists[0][1]} cards` : 'pick printings to unlock')}
       ${fact('📚', 'Favourite set', sets[0] ? esc(sets[0][0]) : '–', sets[0] ? `${sets[0][1]} cards` : 'pick printings to unlock')}
       ${fact('🗂️', 'Different sets', sets.length, `across ${eras.length} eras`)}
@@ -295,6 +295,10 @@ function renderStats() {
     </div>`;
   animateIn(root);
 }
+
+// click a valuable card or a trivia card: open it big, with its stats beside it
+document.addEventListener('click', e => { const el = e.target.closest('#v-stats [data-dex]'); if (el) { tip.classList.remove('on'); K().openWheel(K().SPECIES[el.dataset.dex - 1]); } });
+document.addEventListener('keydown', e => { if (e.key !== 'Enter') return; const el = e.target.closest && e.target.closest('#v-stats [data-dex]'); if (el) K().openWheel(K().SPECIES[el.dataset.dex - 1]); });
 
 /* ---------- Box ---------- */
 let boxFilter = 'all';

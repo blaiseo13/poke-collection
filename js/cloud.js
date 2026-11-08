@@ -28,7 +28,10 @@ function apply() {
   if (sameBooks && sameBox && sameFavs) return;
   k.applyCloud(remote.books, remote.box, remote.favs);
 }
-db.collection('binders').onSnapshot(s => { if (s.metadata.hasPendingWrites) return; remote.books = s.docs.map(d => ({ id: d.id, ...d.data() })); remote.books.forEach(b => pushed['binders/' + b.id] = JSON.stringify(serBinder(b))); apply(); }, () => { K().toast('Can’t reach your collection right now. Changes on this device won’t save until it reconnects.', '#DC2626'); });
+db.collection('binders').onSnapshot(s => { if (s.metadata.hasPendingWrites) return; const all = s.docs.map(d => ({ id: d.id, ...d.data() }));
+  remote.books = all.filter(b => b.game !== 'onepiece'); remote.books.forEach(b => pushed['binders/' + b.id] = JSON.stringify(serBinder(b))); apply();
+  // One Piece binder lives in the same collection as binders/op-main
+  const op = all.find(b => b.game === 'onepiece'); if (op) { const j = JSON.stringify(normOP(op.owned)); pushed['binders/op-main'] = j; if (window.PKOP && JSON.stringify(normOP(PKOP.owned)) !== j) PKOP.applyCloud(op); } }, () => { K().toast('Can’t reach your collection right now. Changes on this device won’t save until it reconnects.', '#DC2626'); });
 db.doc('box/main').onSnapshot(s => { if (s.metadata.hasPendingWrites || !s.exists) return; remote.box = s.data().items || []; pushed['box/main'] = JSON.stringify(serBox(remote.box)); apply(); }, () => {});
 db.doc('prefs/main').onSnapshot(s => { if (s.metadata.hasPendingWrites || !s.exists) return; remote.favs = (s.data().favs || []).map(Number); pushed['prefs/main'] = JSON.stringify(remote.favs.slice().sort((a, b) => a - b)); apply(); }, () => {});
 
@@ -47,6 +50,9 @@ function push() {
   }, 700);
 }
 function fail() { K().toast('Couldn’t save that change. Check your connection.', '#DC2626'); }
+const normOP = o => Object.fromEntries(Object.entries(o || {}).filter(([k, v]) => v === 1 || v === 2).sort((a, b) => a[0] < b[0] ? -1 : 1));
+function pushOP(owned) { if (!editor || !remote.books) return; const j = JSON.stringify(normOP(owned)); if (pushed['binders/op-main'] === j) return; pushed['binders/op-main'] = j;
+  db.doc('binders/op-main').set({ game: 'onepiece', name: 'One Piece', createdAt: '2026-11-08', owned: JSON.parse(j) }).catch(fail); }
 function removeBinder(id) { if (!editor) return; delete pushed['binders/' + id]; if (remote.books) remote.books = remote.books.filter(b => b.id !== id); db.doc('binders/' + id).delete().catch(fail); }
 
 let key = null; try { key = localStorage.getItem('pkc.editKey'); } catch (e) {}
@@ -58,5 +64,5 @@ if (key) {
     editor = true; K().setEditor(true);
   }).catch(() => { try { localStorage.removeItem('pkc.editKey'); } catch (e) {} K().toast('That edit link didn’t work. Ask Claude for a fresh one.', '#DC2626'); });
 }
-window.PKCloud = { push, removeBinder, get editor() { return editor; } };
+window.PKCloud = { push, pushOP, removeBinder, get editor() { return editor; } };
 })();

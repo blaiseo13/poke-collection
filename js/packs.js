@@ -135,6 +135,6 @@ function openCard(c) {
 const LB = { pushed: false, close: null };
 document.addEventListener('keydown', e => { const lb = $('#cardLB'); if (e.key === 'Escape' && lb && lb.classList.contains('on') && LB.close) LB.close(); });
 window.addEventListener('popstate', () => { const lb = $('#cardLB'); if (lb && lb.classList.contains('on')) { LB.pushed = false; lb.classList.remove('on'); document.body.style.overflow = ''; } });
-window.PKP = { render, openCard, hitRank, ptsOf };
+window.PKP = { render, openCard, hitRank, ptsOf, loadHistory, drawChart };
 if (document.querySelector('#v-packs.on')) render();
 })();

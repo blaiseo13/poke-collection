@@ -16,11 +16,13 @@ jobs:
           node-version: '22'
       - name: Build trending data
         run: node tools/trending.js
+      - name: Build One Piece data
+        run: node tools/onepiece.js
       - name: Commit if changed
         run: |
           git config user.name "trending-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A data/trending.js data/packs.js data/history
+          git add -A data/trending.js data/packs.js data/onepiece.js data/history
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "Daily trending prices + price history"
           git push

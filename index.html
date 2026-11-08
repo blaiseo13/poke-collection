@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
 <script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
-<link rel="manifest" href="manifest.webmanifest?v=33">
-<link rel="icon" href="icons/favicon-64.png?v=33" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=33">
+<link rel="manifest" href="manifest.webmanifest?v=36">
+<link rel="icon" href="icons/favicon-64.png?v=36" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=36">
 <meta name="theme-color" content="#F8F9FA">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -688,7 +688,7 @@ body.quick .quickbar{display:flex}
 .pcimg img{width:100%;height:100%;object-fit:cover;display:block}
 .pc2.hh3 .pcimg,.pc2.hh4 .pcimg,.pc2.hh5 .pcimg{box-shadow:0 0 0 2px var(--hc),0 4px 12px color-mix(in srgb,var(--hc) 35%,transparent)}
 .noimg{background:linear-gradient(160deg,#EEF2FF,#FDF2F8)!important;border:2px dashed #C7D2FE}
-.hitimg .ph,.pcimg .ph{display:none}
+.hitimg .ph,.pcimg .ph,.opimg .ph{display:none}
 .noimg .ph{position:absolute;inset:0;display:grid!important;place-items:center;align-content:center;gap:4px;padding:8px;text-align:center}
 .noimg .ph img{width:80%;height:auto;object-fit:contain}
 .noimg .ph small{font-size:10px;color:var(--text3)}.noimg .ph b{font-size:11px;color:var(--text2)}
@@ -786,6 +786,30 @@ html,body{overflow-x:clip}
 /* ---------- points ---------- */
 .ptschip{display:inline-flex;align-items:center;gap:4px;font:800 12px Inter,system-ui,sans-serif;color:#78350F;background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1px solid #FCD34D;border-radius:99px;padding:3px 10px;box-shadow:0 2px 8px rgba(217,119,6,.18);white-space:nowrap}
 .ptschip.sm{font-size:10px;padding:2px 7px}
+
+/* ---------- game switch: Pokémon | One Piece ---------- */
+.gamesw{display:flex;background:#EEF0F3;border-radius:10px;padding:3px;gap:2px}
+.gamesw button{border:0;background:none;border-radius:8px;padding:6px 12px;font:800 12px Inter,system-ui,sans-serif;color:var(--text2);white-space:nowrap;transition:all .2s}
+.gamesw button.on{background:#fff;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.gamesw button[data-g="op"].on{background:linear-gradient(135deg,#B91C1C,#DC2626);color:#fff}
+.opview{display:none}.opview.on{display:block;animation:fadeUp .3s ease-out}
+.game-op #binderSel,.game-op header .search,.game-op #ripBtn,.game-op .asof{display:none!important}
+.opgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.opc{display:grid;gap:5px;cursor:pointer;border-radius:12px;padding:7px;transition:background .15s,transform .15s}
+.opc:hover{background:#F3F4F6;transform:translateY(-2px)}
+.opimg{position:relative;aspect-ratio:5/7;border-radius:8px;overflow:hidden;background:#EEF0F3;box-shadow:0 2px 8px rgba(0,0,0,.15);border-bottom:3px solid var(--cc)}
+.opimg img{width:100%;height:100%;object-fit:cover;display:block}
+.opc.hit4 .opimg{box-shadow:0 0 0 2px #DB2777,0 6px 16px rgba(219,39,119,.3)}
+.opc.hit5 .opimg{box-shadow:0 0 0 3px #F5C04A,0 0 20px rgba(245,192,74,.5)}
+.opv{position:absolute;left:4px;top:4px;font:800 9px Inter;color:#fff;background:rgba(17,24,39,.8);border-radius:5px;padding:2px 6px;max-width:90%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.opc:not(.have) .opimg img{opacity:.55;filter:saturate(.6)}
+.opf .opsearch{flex:1;min-width:200px;border:1px solid var(--border);border-radius:8px;padding:8px 12px;font:inherit;font-size:14px;background:#fff}
+.opf .chip[style*="--cc"].on{background:var(--cc);border-color:var(--cc)}
+.opmeta{display:flex;flex-wrap:wrap;gap:6px}.opmeta span{font:600 11px Inter;background:#F3F4F6;border-radius:99px;padding:3px 9px;color:var(--text2)}
+.opbtns{display:flex;gap:6px;flex-wrap:wrap}.opbtns .stagesave{position:relative;flex:1}
+.grid.quick .opq img{width:56px;height:78px;object-fit:cover;image-rendering:auto;border-radius:4px}
+.opk .val{font-size:24px}
+@media (max-width:760px){.gamesw button{padding:5px 8px;font-size:11px}.opgrid{grid-template-columns:repeat(3,1fr);gap:8px}.opc{padding:3px}.opf .opsearch{font-size:16px;min-width:0;flex-basis:100%}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -826,6 +850,7 @@ html,body{overflow-x:clip}
 <header>
   <div class="hwrap">
     <div class="logo"><div class="ball emb" id="logoBall" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -14 112 112">  <defs>  <radialGradient id="em-molten" cx="42%" cy="30%" r="70%">   <stop offset="0" stop-color="#FFF6C2"/>   <stop offset=".28" stop-color="#FFC233"/>   <stop offset=".6" stop-color="#FF6A00"/>   <stop offset="1" stop-color="#B81E00"/>  </radialGradient>  <linearGradient id="em-coal" x1="0" y1="0" x2="0" y2="1">   <stop offset="0" stop-color="#4A1C0E"/>   <stop offset="1" stop-color="#160704"/>  </linearGradient>  <radialGradient id="em-core" cx="45%" cy="40%" r="60%">   <stop offset="0" stop-color="#FFFBE6"/>   <stop offset=".45" stop-color="#FFD24D"/>   <stop offset="1" stop-color="#FF5A00"/>  </radialGradient>  <linearGradient id="em-lick" x1="0" y1="1" x2="0" y2="0">   <stop offset="0" stop-color="#FF5A00"/>   <stop offset=".6" stop-color="#FFB020"/>   <stop offset="1" stop-color="#FFE680" stop-opacity=".2"/>  </linearGradient>  <clipPath id="em-orb"><circle cx="50" cy="54" r="40"/></clipPath> </defs>  <g class="licks" fill="url(#em-lick)">  <path class="l1" d="M28 28 C22 16 31 8 28 -2 C40 6 42 18 38 28 Z"/>  <path class="l2" d="M44 20 C38 6 50 -2 48 -12 C62 0 62 12 57 21 Z"/>  <path class="l3" d="M62 26 C60 14 70 8 71 0 C79 11 77 21 72 29 Z"/> </g> <g clip-path="url(#em-orb)">  <rect x="0" y="0" width="100" height="100" fill="url(#em-molten)"/>    <path d="M6 62 C18 50 28 70 40 58 S60 44 72 54 S88 58 96 48 L96 100 L6 100 Z" fill="url(#em-coal)"/>  <g fill="#FF8A1F" opacity=".9">   <circle cx="26" cy="80" r="1.4"/><circle cx="40" cy="88" r="1"/><circle cx="62" cy="82" r="1.6"/><circle cx="74" cy="72" r="1"/><circle cx="52" cy="76" r=".9"/>  </g> </g>  <g clip-path="url(#em-orb)"><path d="M6 62 C18 50 28 70 40 58 S60 44 72 54 S88 58 96 48" fill="none" stroke="#1E0803" stroke-width="5.5"/></g> <circle cx="50" cy="54" r="40" fill="none" stroke="#1E0803" stroke-width="4.5"/>  <circle cx="50" cy="52" r="11.5" fill="#1E0803"/> <circle class="core" cx="50" cy="52" r="7" fill="url(#em-core)"/> <circle cx="47.5" cy="49.5" r="2" fill="#fff" opacity=".85"/></svg></div>Poké Collection<select id="binderSel" class="binderSel" aria-label="Binder" title="Switch binder"></select><span class="editchip" id="editChip" hidden>✏️ Editing</span></div>
+    <div class="gamesw" id="gameSw" role="group" aria-label="Card game"><button data-g="pk" class="on" type="button">Pokémon</button><button data-g="op" type="button">One Piece</button></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Search name or #number" autocomplete="off"><kbd>/</kbd>
@@ -867,6 +892,8 @@ html,body{overflow-x:clip}
   <section class="view" id="v-stats"></section>
   <section class="view" id="v-box"></section>
   <section class="view" id="v-packs"></section>
+  <section class="opview" id="op-collection"></section><section class="opview" id="op-need"></section><section class="opview" id="op-trend"></section>
+  <section class="opview" id="op-stats"></section><section class="opview" id="op-completion"></section><section class="opview" id="op-packs"></section>
 
   <section class="view" id="v-completion">
     <div class="comp-top">
@@ -916,10 +943,10 @@ html,body{overflow-x:clip}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=33"></script>
-<script src="data/my-collection.js?v=33"></script>
-<script src="data/sync.js?v=33"></script>
-<script src="js/binder.js?v=33"></script>
+<script src="data/cards.js?v=36"></script>
+<script src="data/my-collection.js?v=36"></script>
+<script src="data/sync.js?v=36"></script>
+<script src="js/binder.js?v=36"></script>
 <script>
 (() => {
 'use strict';
@@ -1063,13 +1090,19 @@ const UI = { gen: -1, show: 'all', tier: -1, sort: 'dex', q: '', quick: false };
 function placePill() { const on = $('#tabs button.on'), p = $('#tabs .pill'); p.style.left = on.offsetLeft + 'px'; p.style.width = on.offsetWidth + 'px'; }
 // each tab is a history step (phone back button works) and keeps its own scroll spot
 const scrollMem = {};
+// which card game is showing (kept per device)
+let GAME = (() => { try { return localStorage.getItem('pkc.game') || 'pk'; } catch (e) { return 'pk'; } })();
+function setGame(g) { GAME = g === 'op' ? 'op' : 'pk'; try { localStorage.setItem('pkc.game', GAME); } catch (e) {} document.body.classList.toggle('game-op', GAME === 'op');
+  document.querySelectorAll('#gameSw button').forEach(b => b.classList.toggle('on', b.dataset.g === GAME)); showView(curView(), false); window.scrollTo(0, 0); }
+document.getElementById('gameSw').onclick = e => { const b = e.target.closest('[data-g]'); if (b && b.dataset.g !== GAME) setGame(b.dataset.g); };
 const curView = () => { const on = $('#tabs button.on'); return on ? on.dataset.v : 'collection'; };
 function showView(v, push) {
   if (!$(`#tabs button[data-v="${v}"]`)) v = 'collection';
   scrollMem[curView()] = window.scrollY;
   document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x.dataset.v === v));
   document.querySelectorAll('.view').forEach(el => el.classList.toggle('on', el.id === 'v-' + v));
-  placePill(); if (v === 'completion') renderCompletion(); else if (v === 'collection') renderKpis(); else window.PKX && PKX.render(v);
+  if (GAME === 'op') { document.querySelectorAll('.view').forEach(el => el.classList.remove('on')); placePill(); window.PKOP && PKOP.render(v); }
+  else { document.querySelectorAll('.opview').forEach(el => el.classList.remove('on')); placePill(); if (v === 'completion') renderCompletion(); else if (v === 'collection') renderKpis(); else window.PKX && PKX.render(v); }
   if (push && location.hash !== '#' + v) history.pushState({ v }, '', '#' + v);
   requestAnimationFrame(() => window.scrollTo(0, scrollMem[v] || 0));
 }
@@ -1527,19 +1560,20 @@ function applyCloud(books, box, favs) {
   if ($('#modal').classList.contains('on')) { renderArena(W.sp); go(W.idx); }
 }
 window.PKC = { tierOfRarity, cardPoints, binderPoints, applyCloud, setEditor, FAVS, S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, save, displayCard, ownedOf, openWheel, toast, burst, shower, fmtDate, refreshTile, renderKpis, renderGrid, logMove, wheelRefresh: () => { if ($('#modal').classList.contains('on')) go(W.idx); } };
-renderGrid(); placePill(); window.PKX && PKX.start();
+renderGrid(); placePill(); window.PKX && PKX.start(); if (GAME === 'op') setTimeout(() => setGame('op'), 0);
 { const v0 = (location.hash || '').slice(1); history.replaceState({ v: v0 || 'collection' }, ''); if (v0 && v0 !== 'collection') showView(v0, false); }
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=33"></script>
-<script src="data/trending.js?v=33"></script>
-<script src="js/trending.js?v=33"></script>
-<script src="js/packs.js?v=33"></script>
+<script src="js/extras.js?v=36"></script>
+<script src="data/trending.js?v=36"></script>
+<script src="js/trending.js?v=36"></script>
+<script src="js/packs.js?v=36"></script>
+<script src="js/onepiece.js?v=36"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=33"></script>
-<script src="js/cloud.js?v=33"></script>
+<script src="data/firebase-config.js?v=36"></script>
+<script src="js/cloud.js?v=36"></script>
 </body>
 </html>

@@ -500,6 +500,49 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .more .spin{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .needmore{grid-column:1/-1;justify-self:center;margin:10px 0}
+
+/* ---------- 3D stage: the animated Pokémon on its platform ---------- */
+#info{display:flex;flex-direction:column;gap:12px;flex:1}
+.arena{position:relative;height:200px;border-radius:18px;overflow:hidden;perspective:700px;flex:none;cursor:pointer;user-select:none;
+  background:radial-gradient(90% 75% at 50% 88%,color-mix(in srgb,var(--tc) 40%,#fff) 0%,color-mix(in srgb,var(--tc) 10%,#fff) 55%,#fff 80%);
+  border:1px solid color-mix(in srgb,var(--tc) 35%,#E5E7EB);box-shadow:inset 0 -30px 50px -30px color-mix(in srgb,var(--tc) 45%,transparent)}
+.arena .plat{position:absolute;left:50%;bottom:6px;width:190px;height:190px;margin-left:-95px;border-radius:50%;transform:rotateX(76deg);transform-style:preserve-3d;
+  background:radial-gradient(circle,color-mix(in srgb,var(--tc) 30%,#fff) 0 34%,transparent 35%),
+    repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--tc) 70%,#fff) 0 8deg,color-mix(in srgb,var(--tc) 25%,#fff) 8deg 16deg);
+  -webkit-mask:radial-gradient(circle,#000 0 60%,transparent 61%);mask:radial-gradient(circle,#000 0 60%,transparent 61%);
+  box-shadow:0 0 40px color-mix(in srgb,var(--tc) 60%,transparent);animation:platspin 9s linear infinite}
+@keyframes platspin{to{transform:rotateX(76deg) rotate(360deg)}}
+.arena .shadow{position:absolute;left:50%;bottom:44px;width:90px;height:16px;margin-left:-45px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.28),transparent 70%);animation:shadowb 2.4s ease-in-out infinite}
+@keyframes shadowb{50%{transform:scale(.8);opacity:.7}}
+.arena .mon{position:absolute;left:50%;bottom:46px;height:112px;width:auto;max-width:180px;object-fit:contain;transform:translateX(-50%);animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 6px 4px rgba(0,0,0,.18));image-rendering:auto;pointer-events:none}
+@keyframes bob{50%{transform:translateX(-50%) translateY(-9px)}}
+.arena.hop .mon{animation:hop .75s cubic-bezier(.3,1.5,.5,1)}
+@keyframes hop{30%{transform:translateX(-50%) translateY(-56px) rotate(-12deg) scale(1.12)}60%{transform:translateX(-50%) translateY(-20px) rotate(10deg) scale(1.05)}100%{transform:translateX(-50%)}}
+.arena .aura{position:absolute;left:50%;bottom:40px;width:170px;height:170px;margin-left:-85px;border-radius:50%;pointer-events:none;opacity:0}
+.arena .lbl{position:absolute;left:10px;top:10px;font:800 10px Inter,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--ac,#6B7280);border-radius:99px;padding:4px 9px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.arena .fav{position:absolute;right:10px;top:8px;width:38px;height:38px;border-radius:50%;border:0;background:#fff;color:#D1D5DB;font-size:20px;line-height:38px;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:transform .2s,color .2s}
+.arena .fav.on{color:#E11D48;animation:favpop .45s cubic-bezier(.2,1.8,.4,1)}
+@keyframes favpop{50%{transform:scale(1.35)}}
+.arena .hint{position:absolute;right:12px;bottom:8px;font:600 10px Inter;color:color-mix(in srgb,var(--tc) 60%,#6B7280)}
+.arena .star{position:absolute;left:50%;top:50%;font-size:14px;pointer-events:none;animation:orbit 4s linear infinite;animation-delay:var(--d)}
+@keyframes orbit{from{transform:rotate(0deg) translateX(78px) rotate(0deg)}to{transform:rotate(360deg) translateX(78px) rotate(-360deg)}}
+.arena .crown{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);font-size:24px;animation:bob 2.4s ease-in-out infinite;filter:drop-shadow(0 2px 4px rgba(217,119,6,.6))}
+/* looks by the form he owns */
+.arena.f1 .aura{opacity:.55;background:conic-gradient(#f9a8d4,#fde68a,#a7f3d0,#93c5fd,#c4b5fd,#f9a8d4);-webkit-mask:radial-gradient(circle,transparent 0 58%,#000 60% 66%,transparent 68%);mask:radial-gradient(circle,transparent 0 58%,#000 60% 66%,transparent 68%);animation:spinA 6s linear infinite}
+.arena.f2 .aura{opacity:.7;background:radial-gradient(circle,rgba(37,99,235,.45),transparent 65%);animation:pulseA 2.2s ease-in-out infinite}
+.arena.f3 .aura{opacity:.6;background:conic-gradient(from 0deg,#f472b6,#facc15,#4ade80,#60a5fa,#a78bfa,#f472b6);filter:blur(14px);animation:spinA 5s linear infinite}
+.arena.f4 .aura{opacity:.75;background:radial-gradient(circle,rgba(236,72,153,.55),transparent 65%);animation:pulseA 1.6s ease-in-out infinite}
+.arena.f5{background:radial-gradient(90% 75% at 50% 88%,#FDE68A 0%,#FEF3C7 55%,#fff 80%);border-color:#F5C04A}
+.arena.f5 .aura{opacity:.9;width:260px;height:260px;margin-left:-130px;bottom:-10px;background:repeating-conic-gradient(rgba(251,191,36,.55) 0 6deg,transparent 6deg 18deg);-webkit-mask:radial-gradient(circle,#000 0 30%,transparent 70%);mask:radial-gradient(circle,#000 0 30%,transparent 70%);animation:spinA 12s linear infinite}
+@keyframes spinA{to{transform:rotate(360deg)}}
+@keyframes pulseA{50%{transform:scale(1.15);opacity:1}}
+.arena.uncaught .mon{filter:grayscale(1) opacity(.55)}
+.arena.uncaught .plat{filter:grayscale(.8);opacity:.6}
+.burstdot{position:absolute;width:8px;height:8px;border-radius:50%;pointer-events:none;animation:bd .7s ease-out forwards}
+@keyframes bd{to{transform:translate(var(--x),var(--y)) scale(.2);opacity:0}}
+.favmark{position:absolute;left:6px;top:6px;width:22px;height:22px;border-radius:50%;background:#fff;color:#E11D48;font-size:13px;line-height:22px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:2}
+.tofile .favmark{top:34px}
+@media (hover:none),(max-width:760px){.arena{height:170px}.arena .plat{animation-duration:14s}.arena .aura{filter:none}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -586,7 +629,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
         <div class="wheelbar"><input type="range" id="wheelRange" min="0" max="0" value="0"></div>
         <div class="hint">Scroll, drag or use ← → to spin through every printing</div>
       </div>
-      <div class="info" id="info"></div>
+      <div class="info"><div id="arena"></div><div id="info"></div></div>
     </div>
   </div>
 </div>
@@ -595,10 +638,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=13"></script>
-<script src="data/my-collection.js?v=13"></script>
-<script src="data/sync.js?v=13"></script>
-<script src="js/binder.js?v=13"></script>
+<script src="data/cards.js?v=14"></script>
+<script src="data/my-collection.js?v=14"></script>
+<script src="data/sync.js?v=14"></script>
+<script src="js/binder.js?v=14"></script>
 <script>
 (() => {
 'use strict';
@@ -706,6 +749,8 @@ const logMove = (dex, text, t) => { S.log.unshift({ dex, text, t, at: Date.now()
 
 const ownedOf = dex => S.owned[dex];
 const WANT = new Set((S.binders[S.cur].want || []).map(Number));
+let FAVS; try { FAVS = new Set(JSON.parse(localStorage.getItem('pkc.favs')) || []); } catch (e) { FAVS = new Set(); }
+const saveFavs = () => { try { localStorage.setItem('pkc.favs', JSON.stringify([...FAVS])); } catch (e) {} };
 function displayCard(sp) {
   const o = ownedOf(sp.dex);
   if (!o) return sp.coolest;
@@ -752,7 +797,7 @@ function chipRow(el, items, get, set) {
     el.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); renderGrid(); };
 }
 chipRow($('#genChips'), [[-1,'All gens'], ...GENS.map((g,i) => [i, 'Gen ' + ROMAN[i]])], () => UI.gen, v => UI.gen = v);
-chipRow($('#showChips'), [['all','All'],['owned','Owned'],['missing','Missing'],['want','Want list'],['tofile','To file'],['unpicked','Printing not set']], () => UI.show, v => UI.show = v);
+chipRow($('#showChips'), [['all','All'],['owned','Owned'],['missing','Missing'],['fav','♥ Favorites'],['want','Want list'],['tofile','To file'],['unpicked','Printing not set']], () => UI.show, v => UI.show = v);
 $('#tierSel').innerHTML = '<option value="-1">Any form</option>' + TIERS.map((t,i) => `<option value="${i}">${t.l}</option>`).join('');
 $('#tierSel').onchange = e => { UI.tier = +e.target.value; renderGrid(); };
 $('#sortSel').onchange = e => { UI.sort = e.target.value; renderGrid(); };
@@ -798,6 +843,7 @@ function filtered() {
     if (UI.show === 'want' && (o || !WANT.has(sp.dex))) return false;
     if (UI.show === 'tofile' && !(o && S.toFile[sp.dex])) return false;
     if (UI.show === 'unpicked' && !(o && !o.c)) return false;
+    if (UI.show === 'fav' && !FAVS.has(sp.dex)) return false;
     if (UI.tier >= 0 && (!o || o.t !== UI.tier)) return false;
     if (q && !(sp.name.toLowerCase().includes(q) || (/^\d+$/.test(qn) && String(sp.dex).startsWith(qn)))) return false;
     return true;
@@ -814,7 +860,7 @@ function tileHTML(sp, i) {
   const badge = o ? TIERS[o.t] : null, nxt = nt != null ? TIERS[nt] : null;
   return `<div class="tile ${o ? 'owned t' + o.t + (S.toFile[sp.dex] ? ' tofile' : '') : 'missing' + (WANT.has(sp.dex) ? ' want' : '')}" data-dex="${sp.dex}" style="--tc:${tc};--dl:${Math.min(i, 24) * 28}ms">
     <div class="card3d"><img decoding="async" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${c.img}" alt="${sp.name}" data-dex="${sp.dex}"><div class="foil"></div><div class="glare"></div>
-      <div class="ribbon">${WANT.has(sp.dex) ? 'WANT' : 'MISSING'}</div>${o && S.toFile[sp.dex] ? '<div class="filetag">TO FILE</div>' : ''}<div class="cool">Coolest: ${TIERS[sp.coolest.tier].l}</div>${window.PKX ? PKX.tileExtra(sp, o) : ''}</div>
+      <div class="ribbon">${WANT.has(sp.dex) ? 'WANT' : 'MISSING'}</div>${o && S.toFile[sp.dex] ? '<div class="filetag">TO FILE</div>' : ''}<div class="cool">Coolest: ${TIERS[sp.coolest.tier].l}</div>${FAVS.has(sp.dex) ? '<span class="favmark" title="Favorite">♥</span>' : ''}${window.PKX ? PKX.tileExtra(sp, o) : ''}</div>
     <div class="meta"><span class="tdot"></span><span class="nm">${sp.name}</span><span class="num">#${String(sp.dex).padStart(3,'0')}</span></div>
     <div class="status">${o ? `<span class="pill have">✓ Have</span><span class="badge" style="--bc:${badge.c}">${badge.l}</span>` : WANT.has(sp.dex) ? '<span class="pill want">★ Want</span><span class="pill need">✗ Need</span>' : '<span class="pill need">✗ Need</span>'}</div>
     <div class="acts">${o
@@ -915,7 +961,7 @@ function openWheel(sp) {
   const o = ownedOf(sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   const counts = TIERS.map((_, i) => sp.cards.filter(c => c.tier === i).length);
   $('#mTiers').innerHTML = `<button class="chip on" data-v="-1">All ${sp.cards.length}</button>` + TIERS.map((t,i) => counts[i] ? `<button class="chip" data-v="${i}">${t.l} ${counts[i]}</button>` : '').join('');
-  buildWheel(); $('#modal').classList.add('on'); document.body.style.overflow = 'hidden';
+  buildWheel(); renderArena(sp); $('#modal').classList.add('on'); document.body.style.overflow = 'hidden';
 }
 $('#mTiers').onclick = e => { const b = e.target.closest('.chip'); if (!b) return; W.tf = +b.dataset.v;
   $('#mTiers').querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b)); buildWheel(); };
@@ -1010,7 +1056,28 @@ function renderInfo() {
   window.PKX && PKX.bindInfo(c, sp);
   if (fresh) { const pv = $('#info .pv[data-money]'); pv && countMoney(pv); }
 }
-function afterChange() { const o = ownedOf(W.sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
+// ----- 3D stage: the animated Pokémon, dressed up by the form he owns -----
+const SPR = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/';
+const FORM_LOOK = ['Basic', 'Reverse shimmer', 'Rare aura', 'Holo aura', 'Ultra glow', 'Secret gold'];
+function renderArena(sp) {
+  const o = ownedOf(sp.dex), f = o ? o.t : -1, tc = TYPE_C[sp.type] || '#A8A29E', fav = FAVS.has(sp.dex);
+  const stars = f >= 4 ? Array.from({ length: f === 5 ? 6 : 3 }, (_, i) => `<span class="star" style="--d:-${i * (4 / (f === 5 ? 6 : 3))}s">${f === 5 ? '⭐' : '✦'}</span>`).join('') : '';
+  $('#arena').innerHTML = `<div class="arena ${o ? 'f' + f : 'uncaught'}" style="--tc:${tc};--ac:${o ? TIERS[f].c : '#9CA3AF'}" role="button" tabindex="0" aria-label="Play with ${sp.name}">
+    <div class="aura"></div><div class="plat"></div><div class="shadow"></div>${stars}${f === 5 ? '<span class="crown">👑</span>' : ''}
+    <img class="mon" alt="${sp.name}" src="${SPR}showdown/${sp.dex}.gif" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${SPR}home/${sp.dex}.png'}else if(this.dataset.f==='1'){this.dataset.f=2;this.src='${SPR}official-artwork/${sp.dex}.png'}">
+    <span class="lbl">${o ? FORM_LOOK[f] : 'Not caught yet'}</span>
+    <button class="fav${fav ? ' on' : ''}" id="favBtn" aria-label="${fav ? 'Remove from favorites' : 'Add to favorites'}" title="${fav ? 'Remove from favorites' : 'Add to favorites'}">♥</button>
+    <span class="hint">tap to play</span></div>`;
+  const ar = $('#arena .arena');
+  ar.onclick = e => { if (e.target.closest('#favBtn')) return; ar.classList.remove('hop'); void ar.offsetWidth; ar.classList.add('hop');
+    const r = ar.getBoundingClientRect(), cols = f >= 4 ? ['#FBBF24', '#F472B6', '#A78BFA', '#fff'] : [tc, '#fff', tc];
+    for (let i = 0; i < 14; i++) { const d = document.createElement('span'), a = Math.random() * Math.PI * 2, v = 40 + Math.random() * 60; d.className = 'burstdot';
+      d.style.cssText = `left:${r.width / 2}px;top:${r.height - 90}px;background:${cols[i % cols.length]};--x:${Math.cos(a) * v}px;--y:${Math.sin(a) * v - 30}px`; ar.appendChild(d); setTimeout(() => d.remove(), 750); } };
+  ar.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ar.click(); } };
+  $('#favBtn').onclick = e => { e.stopPropagation(); if (FAVS.has(sp.dex)) FAVS.delete(sp.dex); else FAVS.add(sp.dex); saveFavs();
+    toast(FAVS.has(sp.dex) ? `♥ ${sp.name} added to favorites` : `${sp.name} removed from favorites`, '#E11D48'); renderArena(sp); refreshTile(sp.dex); };
+}
+function afterChange() { renderArena(W.sp); const o = ownedOf(W.sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   go(W.idx); refreshTile(W.sp.dex, 'color'); renderKpis(); }
 function hideWheel() { $('#modal').classList.remove('on'); document.body.style.overflow = ''; }
 // close first, then undo our own history step (only if we added one), so closing can never get stuck
@@ -1104,6 +1171,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=13"></script>
+<script src="js/extras.js?v=14"></script>
 </body>
 </html>

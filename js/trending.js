@@ -26,7 +26,7 @@ function moverRow(c, i) {
 function richRow(c, i) {
   return `<button class="mx${i < 3 ? ' top3' : ''}" data-i="${reg(c)}"><span class="mxr">${i === 0 ? '👑' : i + 1}</span>${thumb(c)}
     <span class="mxn"><b>${esc(c.n)}</b><span class="mxpack">🎁 ${esc(c.set)}</span><small>${esc(c.r)} · #${esc(c.num)}</small></span>
-    <span class="mxp"><b>${money(c.usd)}</b>${pct(c.t)}${status(c)}</span></button>`;
+    <span class="mxp"><b>${money(c.usd)}</b>${pct(c.t)}${window.PKP ? `<span class="ptschip sm">⭐ ${PKP.ptsOf(c, c.date)} pts</span>` : ''}${status(c)}</span></button>`;
 }
 function chase(c, i) {
   return `<div class="ch${i < 3 ? ' top3' : ''}" data-i="${reg(c)}" role="button" tabindex="0">
@@ -42,7 +42,7 @@ function render() {
   IDX = [];
   if (!ST.set || !T.sets.some(s => s.id === ST.set)) ST.set = (T.sets.find(s => s.top.filter(c => c.img).length > s.top.length / 2) || T.sets[0]).id;
   const s = T.sets.find(x => x.id === ST.set);
-  const priciest = T.sets.flatMap(x => x.top.map(c => Object.assign({}, c, { set: x.name }))).sort((a, b) => b.usd - a.usd).slice(0, 20);
+  const priciest = T.sets.flatMap(x => x.top.map(c => Object.assign({}, c, { set: x.name, date: x.date }))).sort((a, b) => b.usd - a.usd).slice(0, 20);
   root.innerHTML = `
     <div class="trhead"><h2>Trending</h2><span class="muted">As of ${us(T.asOf)}</span></div>
     <div class="panel"><h3>💰 Most expensive cards you can pull</h3><div class="mxlist">${priciest.map(richRow).join('')}</div></div>

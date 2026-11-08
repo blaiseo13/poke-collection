@@ -10,6 +10,9 @@ const us = iso => { if (!iso) return ''; const [y, m, d] = iso.slice(0, 10).spli
 const pct = t => t == null ? '' : `<span class="tr ${t > 0.005 ? 'up' : t < -0.005 ? 'down' : 'flat'}">${t > 0.005 ? '▲' : t < -0.005 ? '▼' : '•'} ${Math.abs(t * 100).toFixed(0)}%</span>`;
 // how big a hit is, from the printed rarity (5 = the gold-tier chase)
 const hitRank = r => /mega hyper|hyper rare|special illustration/i.test(r) ? 5 : /illustration rare/i.test(r) ? 4 : /ultra rare|ace spec|shiny|double rare|black white/i.test(r) ? 3 : 0;
+// rarity text -> our six forms, for points
+const tierOfText = r => /mega hyper|hyper rare|special illustration|illustration rare|secret|rainbow|gold/i.test(r) ? 5 : /ultra|double rare|ace spec|shiny|black white|ex$|vmax|vstar|gx/i.test(r) ? 4 : /holo/i.test(r) ? 3 : /rare/i.test(r) ? 2 : 0;
+const ptsOf = (c, date) => window.PKC ? PKC.cardPoints(tierOfText(c.r || ''), c.usd, date) : 0;
 const HIT_C = { 5: '#D97706', 4: '#DB2777', 3: '#4F46E5', 0: '#9CA3AF' };
 const ST = { set: null, filter: 'all', sort: 'num', loading: false };
 
@@ -33,7 +36,8 @@ function render() {
   // open on the newest pack that already has card pictures (brand-new sets can take days to get them)
   if (!ST.set || !P.sets.some(s => s.id === ST.set)) ST.set = (P.sets.find(s => s.cards.filter(a => a[3]).length > s.cards.length / 2) || P.sets[0]).id;
   const set = P.sets.find(s => s.id === ST.set), cards = set.cards.map(a => cardObj(set, a));
-  const total = cards.reduce((a, c) => a + (c.usd || 0), 0), priced = cards.filter(c => c.usd).length;
+  const total = cards.reduce((a, c) => a + (c.usd || 0), 0), priced = cards.filter(c => c.usd).length, packPts = cards.reduce((a, c) => a + ptsOf(c, set.date), 0);
+  cards.forEach(c => c.date = set.date);
   const hits = cards.filter(c => c.hit >= 4 || c.usd >= 20).sort((a, b) => b.usd - a.usd).slice(0, 16);
   let list = cards.filter(c => ST.filter === 'all' || (ST.filter === 'hits' && (c.hit >= 3 || c.usd >= 10)) || (ST.filter === 'poke' && c.cat === 'P') || (ST.filter === 'trainer' && c.cat !== 'P'));
   if (ST.sort === 'price') list = list.slice().sort((a, b) => (b.usd || 0) - (a.usd || 0));
@@ -42,12 +46,12 @@ function render() {
     <div class="packhero">
       ${set.logo ? `<img class="plogo" src="${set.logo}.webp" alt="" onerror="this.remove()">` : ''}
       <div class="ph-t"><h2>${esc(set.name)}</h2><span class="muted">Released ${us(set.date)} · ${cards.length} cards (${set.count || '?'} + secret rares)</span></div>
-      <div class="ph-stats"><div><small>Master set cost</small><b>${money(total)}</b></div><div><small>Big hits</small><b>${hits.length}</b></div><div><small>Top card</small><b>${money(hits[0] ? hits[0].usd : 0)}</b></div></div>
+      <div class="ph-stats"><div><small>Master set cost</small><b>${money(total)}</b></div><div><small>Pack points</small><b>⭐ ${packPts.toLocaleString()}</b></div><div><small>Big hits</small><b>${hits.length}</b></div><div><small>Top card</small><b>${money(hits[0] ? hits[0].usd : 0)}</b></div></div>
     </div>
     <h3 class="sech">💎 Big hits to pull</h3>
     <div class="hits">${hits.map((c, i) => `<div class="hit h${c.hit}" data-card="${esc(c.id)}" role="button" tabindex="0" style="--hc:${HIT_C[c.hit] || HIT_C[3]}">
       <div class="hitimg${c.img ? '' : ' noimg'}">${c.img ? `<img src="${BLANK}" data-src="${c.img}/low.webp" alt="" onerror="this.parentNode.classList.add('noimg');this.remove()">` : ''}<span class="ph">${c.dex ? `<img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${c.dex}.png" alt="" loading="lazy">` : `<b>${esc(c.n)}</b>`}<small>Picture coming soon</small></span><span class="hrank">${i === 0 ? '👑' : '#' + (i + 1)}</span><span class="hsheen"></span></div>
-      <div class="hitt"><b>${esc(c.n)}</b><small>${esc(c.r)} · #${esc(c.num)}</small><div class="hitp"><b>${money(c.usd)}</b>${pct(c.t)}</div>${status(c)}</div></div>`).join('') || '<div class="muted">No prices yet for this set.</div>'}</div>
+      <div class="hitt"><b>${esc(c.n)}</b><small>${esc(c.r)} · #${esc(c.num)}</small><div class="hitp"><b>${money(c.usd)}</b>${pct(c.t)}</div><span class="ptschip sm">⭐ ${ptsOf(c, set.date)} pts</span>${status(c)}</div></div>`).join('') || '<div class="muted">No prices yet for this set.</div>'}</div>
     <div class="packbar">
       <h3 class="sech" style="margin:0">Every card in the pack</h3>
       <div class="chips" id="packFilter">${[['all', 'All ' + cards.length], ['hits', 'Hits'], ['poke', 'Pokémon'], ['trainer', 'Trainers & energy']].map(([v, l]) => `<button class="chip${ST.filter === v ? ' on' : ''}" data-f="${v}">${l}</button>`).join('')}
@@ -109,6 +113,7 @@ function openCard(c) {
     <div class="lbinfo"><h2>${esc(c.n)}</h2><div class="muted">${esc(c.set)} · #${esc(c.num)}</div>
       <div class="lbr"><span class="rpill" style="background:${HIT_C[c.hit] || '#6B7280'}">${esc(c.r) || 'Unknown rarity'}</span>${status(c)}</div>
       <div class="lbp"><small>Market price</small><b>${money(c.usd)}</b>${pct(c.t)}</div>
+      <span class="ptschip" style="justify-self:start">⭐ ${ptsOf(c, c.date)} pts</span>
       <div class="lbchart"><div class="chead"><small>Price history</small><span class="cchg"></span></div>
         <div class="rng">${[['1w', '1W'], ['1m', '1M'], ['ytd', 'YTD'], ['1y', '1Y'], ['all', 'All']].map(([r, l]) => `<button data-r="${r}" class="${r === '1y' ? 'on' : ''}">${l}</button>`).join('')}</div>
         <div class="cbody"><span class="spin"></span></div></div>
@@ -125,6 +130,6 @@ function openCard(c) {
   lb.onclick = e => { if (e.target === lb || e.target.closest('.lbx')) close(); const w = e.target.closest('.lbw'); if (w) { close(); k.openWheel(k.SPECIES[+w.dataset.dex - 1]); } };
   document.addEventListener('keydown', function esc2(e) { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc2); } });
 }
-window.PKP = { render, openCard, hitRank };
+window.PKP = { render, openCard, hitRank, ptsOf };
 if (document.querySelector('#v-packs.on')) render();
 })();

@@ -57,7 +57,7 @@ async function refreshAll() {
   S.box.forEach(b => first.push(k.BY_ID.get(b.id)));
   k.SPECIES.forEach(sp => { const o = k.ownedOf(sp.dex); if (o && o.c) first.push(k.BY_ID.get(o.c)); else if (o) second.push(k.displayCard(sp)); });
   const ok = await fetchPrices([...first, ...second], () => updatePills());
-  busy = false; setPriceState(ok ? 'done' : 'error'); updatePills(); snapshot(); watchMissing();
+  busy = false; setPriceState(ok ? 'done' : 'error'); updatePills(); snapshot(); watchMissing(); K().renderKpis();
   if (document.querySelector('#v-stats.on')) renderStats(); if (document.querySelector('#v-box.on')) renderBox();
 }
 // missing cards: fetch the coolest printing's price only when its tile scrolls into view
@@ -172,6 +172,7 @@ const PKX = window.PKX = {
     return `<div><div class="k">Market price</div>${pr ? `<div class="v price">${money(pr.v)} <span class="muted">${pr.k.replace(/-/g, ' ')}</span></div><div class="muted">TCGplayer, as of ${usDate(pr.u)}${pr.url ? ` · <a href="${pr.url}" target="_blank" rel="noopener">see sales</a>` : ''}</div>` : `<div class="v muted">${known(c) ? 'No price listed' : 'Loading…'}</div>`}</div>
       <div class="statline"><span>HP <b>${c.hp || '–'}</b></span><span>${['Basic', 'Stage 1', 'Stage 2', 'Special'][c.stage] || ''}</span></div>`;
   },
+  priceValue(c, tier) { const pr = priceFor(c, tier); return pr ? pr.v : 0; },
   priceData(c) { if (!known(c)) fetchPrices([c], () => K().wheelRefresh()); const pr = priceFor(c, c.tier);
     return pr ? { v: pr.v, variant: pr.k.replace(/-/g, ' '), asOf: usDate(pr.u), url: pr.url } : { loading: !known(c) }; },
   infoBox(c, sp) {
@@ -264,13 +265,15 @@ function renderStats() {
       ${tile('Binder value', t.conf + t.est, 'money', t.nEst ? `${money(t.conf)} picked · ~${money(t.est)} estimate for ${t.nEst} unpicked` : `${t.nConf} cards priced`, '#059669')}
       ${tile('Printings picked', picked.length, '', `of ${n} cards in your binder`, '#4F46E5')}
       ${tile('Big hits', owned.filter(r => r.o.t >= 4).length, '', 'Ultra Rare or better in this binder', '#D97706')}
-      ${tile('Binder pages', Math.ceil(n / 9), '', '9-pocket pages, front only', '#0EA5E9')}
+      ${tile('⭐ Binder points', K().binderPoints(), '', 'rarity + value of your binder cards', '#D97706')}
       ${tile('Total HP', hp, '', `avg ${n ? Math.round(hp / n) : 0} per card`, '#DC2626')}
-      ${tile('To file', Object.keys(S.toFile).length, '', 'waiting for the binder', '#6B7280')}
+      ${tile('Not in binder', Object.keys(S.toFile).filter(d => S.owned[d]).length, '', 'owned, kept outside the binder', '#4F46E5')}
     </div>
     <div class="sgrid">
       <div class="panel span2"><h3>Most valuable in your binder</h3>${valued.length ? hbars(valued.map(r => ({ dex: r.sp.dex, l: r.sp.name + (r.picked ? '' : ' (est.)'), v: r.pr.v, img: r.c.img, tip: `<b>${esc(r.c.name)}</b><br>${esc(r.c.set)} #${r.c.num}<br>${money(r.pr.v)} · as of ${usDate(r.pr.u)}${r.picked ? '' : '<br>Estimate: printing not picked'}<br><i>Click to see it bigger</i>` })), { fmt: money }) : empty('Prices load in the background. This fills in a moment.')}</div>
       <div class="panel"><h3>Value over time</h3>${t.nEst ? '<div class="muted small">Binder includes estimates for unpicked printings</div>' : ''}${log.length === 1 ? `<div class="hero2"><div><div class="lab">Binder</div><div class="hv" style="color:#4F46E5">${money(log[0].binder)}</div></div><div><div class="lab">Box</div><div class="hv" style="color:#DB2777">${money(log[0].box)}</div></div></div><div class="muted" style="text-align:center">Tracking since ${usDate(log[0].d)}</div>` : log.length > 1 ? lineChart(log) + `<div class="legend"><div class="lg" style="--bc:#4F46E5"><i></i>Binder <span>${money(log[log.length - 1].binder)}</span></div><div class="lg" style="--bc:#DB2777"><i></i>Box <span>${money(log[log.length - 1].box)}</span></div></div>` : empty('First reading saves once prices load.')}</div>
+      <div class="panel"><h3>⭐ Top point cards</h3>${(() => { const pts = owned.filter(r => !S.toFile[r.sp.dex]).map(r => ({ r, p: K().cardPoints(r.o.t, r.pr ? r.pr.v : 0, r.c.date) })).sort((a, b) => b.p - a.p).slice(0, 10);
+        return pts.length ? hbars(pts.map(x => ({ dex: x.r.sp.dex, l: x.r.sp.name, v: x.p, c: '#D97706', img: x.r.c.img, tip: `<b>${esc(x.r.c.name)}</b><br>${esc(x.r.c.set)} #${x.r.c.num}<br>${x.p} points` }))) : empty('Add cards to your binder to score points.'); })()}</div>
       <div class="panel"><h3>Value by form</h3>${hbars(tierVal, { fmt: money })}${t.nEst ? '<div class="muted small" style="margin-top:10px">Includes estimates for unpicked printings</div>' : ''}</div>
       <div class="panel"><h3>Types in your binder</h3>${hbars(types)}</div>
       <div class="panel"><h3>Evolution stages</h3><div class="stack">${stages.map((v, i) => `<div style="background:${STC[i]};--w:${n ? v / n * 100 : 0}%" data-tip="${STL[i]}: ${v}"></div>`).join('')}</div>

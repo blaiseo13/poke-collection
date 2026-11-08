@@ -585,10 +585,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=11"></script>
-<script src="data/my-collection.js?v=11"></script>
-<script src="data/sync.js?v=11"></script>
-<script src="js/binder.js?v=11"></script>
+<script src="data/cards.js?v=12"></script>
+<script src="data/my-collection.js?v=12"></script>
+<script src="data/sync.js?v=12"></script>
+<script src="js/binder.js?v=12"></script>
 <script>
 (() => {
 'use strict';
@@ -730,7 +730,7 @@ function showView(v, push) {
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; showView(b.dataset.v, true); });
 window.addEventListener('popstate', () => {
-  if ($('#modal').classList.contains('on') && !(history.state && history.state.modal)) { hideWheel(); return; }
+  if ($('#modal').classList.contains('on')) { W.pushed = false; hideWheel(); return; }
   const v = (location.hash || '#collection').slice(1); if (v !== curView()) showView(v, false);
 });
 window.addEventListener('resize', placePill);
@@ -885,7 +885,7 @@ $('#grid').addEventListener('click', e => {
 /* ---------- wheel modal ---------- */
 const W = { sp: null, list: [], idx: 0, tf: -1, els: [] };
 function openWheel(sp) {
-  if (!(history.state && history.state.modal)) history.pushState({ modal: sp.dex, v: curView() }, '', location.hash || '#' + curView());
+  if (!$('#modal').classList.contains('on')) { history.pushState({ modal: sp.dex, v: curView() }, '', location.hash || '#' + curView()); W.pushed = true; }
   W.sp = sp; W.tf = -1; $('#mName').textContent = sp.name; $('#mNum').textContent = '#' + String(sp.dex).padStart(3,'0');
   const o = ownedOf(sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   const counts = TIERS.map((_, i) => sp.cards.filter(c => c.tier === i).length);
@@ -988,7 +988,8 @@ function renderInfo() {
 function afterChange() { const o = ownedOf(W.sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   go(W.idx); refreshTile(W.sp.dex, 'color'); renderKpis(); }
 function hideWheel() { $('#modal').classList.remove('on'); document.body.style.overflow = ''; }
-function closeWheel() { if (history.state && history.state.modal) history.back(); else hideWheel(); }
+// close first, then undo our own history step (only if we added one), so closing can never get stuck
+function closeWheel() { const pushed = W.pushed; W.pushed = false; hideWheel(); if (pushed && history.state && history.state.modal) history.back(); }
 $('#mClose').onclick = closeWheel; $('#modal').onclick = e => { if (e.target.id === 'modal') closeWheel(); };
 $('#prev').onclick = () => go(W.idx - 1); $('#next').onclick = () => go(W.idx + 1);
 $('#wheelRange').oninput = e => go(+e.target.value);
@@ -1078,6 +1079,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=11"></script>
+<script src="js/extras.js?v=12"></script>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
@@ -13,6 +13,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Poké">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -369,9 +370,6 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 @media (max-width:760px){
   .hwrap{gap:10px;padding:10px 16px}
   .logo{font-size:18px}
-  .tabs{order:3;width:100%;overflow-x:auto;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{display:none}
-  .tabs button{flex:none}
   .search{order:4;flex-basis:100%;max-width:none}
   .search input{font-size:16px}
   .search kbd,.hbtns{display:none}
@@ -543,6 +541,51 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .favmark{position:absolute;left:6px;top:6px;width:22px;height:22px;border-radius:50%;background:#fff;color:#E11D48;font-size:13px;line-height:22px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.25);z-index:2}
 .tofile .favmark{top:34px}
 @media (hover:none),(max-width:760px){.arena{height:170px}.arena .plat{animation-duration:14s}.arena .aura{filter:none}}
+
+/* ================= app shell (like Conshy Eats): floating glass dock, edge-to-edge, sheet details ================= */
+html{overscroll-behavior:none;-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-font-smoothing:antialiased}
+header,.tabs,.chips,.chip,.kpi,.tile .meta,.tile .status,.mhead{-webkit-user-select:none;user-select:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:rgba(248,249,250,.96)}
+header{top:env(safe-area-inset-top,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+/* the dock */
+.tabs.glass{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:max(16px,calc(env(safe-area-inset-bottom,0px) + 8px));
+  display:flex;gap:2px;padding:6px;border-radius:20px;background:rgba(255,255,255,.78);backdrop-filter:blur(18px) saturate(1.6);-webkit-backdrop-filter:blur(18px) saturate(1.6);
+  border:1px solid rgba(255,255,255,.9);box-shadow:0 10px 30px rgba(17,24,39,.18),0 1px 0 rgba(255,255,255,.8) inset}
+.tabs.glass button{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:14px;font-weight:700;font-size:13px;color:#334155;white-space:nowrap}
+.tabs.glass button.on{color:#fff}
+.tabs.glass .pill{top:6px;bottom:6px;border-radius:14px;background:var(--accent);box-shadow:0 6px 16px rgba(79,70,229,.4)}
+.tabs.glass .ic{font-size:16px;line-height:1;transition:transform .25s cubic-bezier(.2,1.6,.4,1)}
+.tabs.glass button.on .ic{transform:scale(1.15)}
+.toasts{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+.asof{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+/* phones: iOS-style tab bar inside the glass dock, compact top bar, details as a bottom sheet */
+@media (max-width:760px){
+  .tabs.glass{left:12px;right:12px;transform:none;width:auto;overflow:visible;justify-content:space-between;order:0;padding:5px}
+  .tabs.glass button{flex:1;flex-direction:column;gap:2px;padding:7px 2px;font-size:10px;letter-spacing:.01em}
+  .tabs.glass .ic{font-size:20px}
+  .tabs.glass .pill{top:5px;bottom:5px}
+  .hwrap{padding:8px 16px 10px}
+  .logo{font-size:17px;gap:8px}.logo .ball{width:24px;height:24px}
+  .binderSel{max-width:150px;font-size:13px}
+  main{padding:14px 16px calc(100px + env(safe-area-inset-bottom,0px))}
+  .kpis{grid-template-columns:repeat(4,minmax(150px,1fr))!important;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px 16px;padding:0 16px 4px;scrollbar-width:none}
+  .kpis::-webkit-scrollbar{display:none}
+  .kpi{scroll-snap-align:start;padding:12px 14px}.kpi .val{font-size:22px}
+  .filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px 14px;padding:0 16px}
+  .filters::-webkit-scrollbar{display:none}
+  .filters .chips{flex-wrap:nowrap}.filters .chip,.filters select{flex:none}.count{display:none}
+  .grid{gap:14px 10px}
+  .asof{display:none}
+  .modal{align-items:flex-end}
+  .modal.on .mbox{margin:0;width:100%;height:94dvh;border-radius:22px 22px 0 0;animation:sheetUp .38s cubic-bezier(.2,.9,.3,1);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .mbox::before{content:"";display:block;width:40px;height:5px;border-radius:99px;background:#D1D5DB;margin:8px auto 0;flex:none}
+  .mhead{padding:8px 16px 10px;touch-action:none}
+  .mtiers{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:8px 16px}
+  .mtiers .chip,.chips .chip{white-space:nowrap;flex:none}
+}
+@keyframes sheetUp{from{transform:translateY(100%)}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -553,7 +596,6 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <header>
   <div class="hwrap">
     <div class="logo"><div class="ball" id="logoBall"></div>Poké Collection<select id="binderSel" class="binderSel" aria-label="Binder" title="Switch binder"></select></div>
-    <div class="tabs" id="tabs"><div class="pill"></div><button data-v="collection" class="on">Collection</button><button data-v="need">Need</button><button data-v="completion">Completion</button><button data-v="stats">Binder Stats</button><button data-v="box">Box</button></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Search name or #number" autocomplete="off"><kbd>/</kbd>
@@ -564,6 +606,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
     </div>
   </div>
 </header>
+<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="box"><span class="ic">📦</span><span class="tx">Box</span></button></nav>
 
 <main>
   <section class="view on" id="v-collection">
@@ -638,10 +681,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=14"></script>
-<script src="data/my-collection.js?v=14"></script>
-<script src="data/sync.js?v=14"></script>
-<script src="js/binder.js?v=14"></script>
+<script src="data/cards.js?v=15"></script>
+<script src="data/my-collection.js?v=15"></script>
+<script src="data/sync.js?v=15"></script>
+<script src="js/binder.js?v=15"></script>
 <script>
 (() => {
 'use strict';
@@ -1079,6 +1122,13 @@ function renderArena(sp) {
 }
 function afterChange() { renderArena(W.sp); const o = ownedOf(W.sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   go(W.idx); refreshTile(W.sp.dex, 'color'); renderKpis(); }
+// phones: drag the sheet's top bar down to close it
+(() => { const head = document.querySelector('#modal .mhead'), box = document.querySelector('#modal .mbox'); let y0 = null;
+  head.addEventListener('pointerdown', e => { if (e.pointerType === 'mouse' || e.target.closest('button')) return; y0 = e.clientY; box.style.transition = 'none'; });
+  window.addEventListener('pointermove', e => { if (y0 == null) return; const dy = Math.max(0, e.clientY - y0); box.style.transform = `translateY(${dy}px)`; });
+  window.addEventListener('pointerup', e => { if (y0 == null) return; const dy = e.clientY - y0; y0 = null; box.style.transition = 'transform .25s ease';
+    if (dy > 110) { box.style.transform = 'translateY(100%)'; setTimeout(() => { box.style.transform = ''; box.style.transition = ''; closeWheel(); }, 220); } else box.style.transform = ''; });
+})();
 function hideWheel() { $('#modal').classList.remove('on'); document.body.style.overflow = ''; }
 // close first, then undo our own history step (only if we added one), so closing can never get stuck
 function closeWheel() { const pushed = W.pushed; W.pushed = false; hideWheel(); if (pushed && history.state && history.state.modal) history.back(); }
@@ -1171,6 +1221,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=14"></script>
+<script src="js/extras.js?v=15"></script>
 </body>
 </html>

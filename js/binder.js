@@ -186,7 +186,7 @@ const PKX = window.PKX = {
     d && (d.onclick = () => { const i = K().S.box.findIndex(b => b.id === c.id); removeFromBox(i); K().wheelRefresh(); K().refreshTile(sp.dex); });
   },
   inBox: id => K().S.box.some(b => b.id === id),
-  render(v) { if (v === 'stats') renderStats(); if (v === 'box') renderBox(); if (v === 'need') window.PKY && PKY.renderNeed(); if (v === 'trend') window.PKT && PKT.render(); if (v === 'packs') window.PKP && PKP.render(); },
+  render(v) { if (v === 'stats') renderStats(); if (v === 'box') renderBox(); if (v === 'need') window.PKY && PKY.renderNeed(); if (v === 'trend') window.PKT && PKT.render(); if (v === 'packs') window.PKP && PKP.render(); if (v === 'best') window.PKB && PKB.render(); },
   start() { initFile(); setPriceState(); updatePills(); refreshAll(); setInterval(() => { if (!busy) refreshAll(); }, 6 * 36e5); }
 };
 

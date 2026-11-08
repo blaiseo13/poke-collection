@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
 <script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
-<link rel="manifest" href="manifest.webmanifest?v=36">
-<link rel="icon" href="icons/favicon-64.png?v=36" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=36">
+<link rel="manifest" href="manifest.webmanifest?v=37">
+<link rel="icon" href="icons/favicon-64.png?v=37" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=37">
 <meta name="theme-color" content="#F8F9FA">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -813,6 +813,40 @@ html,body{overflow-x:clip}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+/* Binders Best: themed 3x3 binder pages */
+body.game-op #tabs button[data-v="best"]{display:none}
+.bbhero{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 6px}
+.bbchip{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:grid;gap:2px;min-width:120px}.bbchip.wide{flex:1;min-width:200px}
+.bbchip small{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:.04em}.bbchip b{font-size:18px}.bbchip.wide b{font-size:15px}
+.bbtip{margin:0 0 14px}
+.bbpages{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.bbpage{padding:14px;background:linear-gradient(160deg,#1f2937,#111827);border-color:#374151;color:#F9FAFB}
+.bbhd{display:flex;gap:10px;align-items:center;margin-bottom:10px}.bbhd>div{flex:1;min-width:0}
+.bbpage h3{margin:0;font-size:16px;color:#F9FAFB;text-transform:none;letter-spacing:0}.bbhd small{color:#9CA3AF!important;display:block}
+.bbsw{padding:4px 10px;background:#374151;border-color:#4B5563;color:#E5E7EB}
+.bbgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;background:rgba(255,255,255,.04);padding:7px;border-radius:8px;border:1px solid rgba(255,255,255,.08)}
+.bpk{position:relative;border:0;padding:0;background:rgba(255,255,255,.06);border-radius:6px;aspect-ratio:63/88;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.bpk img{width:100%;height:100%;object-fit:cover;display:block}
+.bpk:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 18px rgba(0,0,0,.45);z-index:1}
+.bpk.none img{filter:grayscale(1) brightness(.55) contrast(.9);opacity:.75}
+.bpk-q{position:absolute;inset:0;display:grid;place-items:center;font-size:26px;font-weight:800;color:rgba(255,255,255,.75);text-shadow:0 2px 6px #000}
+.bpk-tag{position:absolute;top:4px;left:4px;right:4px;background:#D97706;color:#fff;font-size:9px;font-weight:700;border-radius:4px;padding:1px 3px;text-align:center}
+.bpk-n{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.85));color:#fff;font-size:10px;font-weight:600;padding:12px 4px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bpk.bind::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-120%);transition:transform .7s}
+.bpk.bind:hover::after{transform:translateX(120%)}
+.bring{flex:none}.bbpage .bring{color:#F9FAFB}
+.bbhm{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.bbmini{padding:12px;display:grid;gap:10px}
+.bbmg{display:grid;grid-template-columns:repeat(9,1fr);gap:2px}.bbmg span{aspect-ratio:63/88;border-radius:2px;overflow:hidden;background:#F3F4F6}.bbmg img{width:100%;height:100%;object-fit:cover}
+.bbmg span.none img{filter:grayscale(1);opacity:.45}
+.bbmt{display:flex;gap:8px;align-items:center}.bbmt>div{display:grid}.bbmt small{font-size:11px}
+.bsheet{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;place-items:center;z-index:200;padding:16px}.bsheet.on{display:grid}
+.bsin{position:relative;width:min(460px,100%);max-height:85vh;overflow:auto;display:grid;gap:10px}
+.bsin .x{position:absolute;top:8px;right:10px;border:0;background:none;font-size:24px;cursor:pointer;color:var(--text2)}
+.bshead{display:flex;gap:12px;align-items:center}.bshead img{width:72px;height:72px;filter:grayscale(1);opacity:.7}.bshead h2{margin:0;font-size:18px}
+.bsin h4{margin:4px 0 0;font-size:13px}
+.bslist{display:grid;gap:6px}.bsrow{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--border);border-radius:8px;padding:8px 10px}.bsrow span{display:grid}.bsrow small{font-size:11px}
+@media (max-width:760px){.bbpages{grid-template-columns:1fr}.bsheet{place-items:end center;padding:0}.bsin{width:100%;border-radius:14px 14px 0 0;max-height:80vh}}
 </style>
 </head>
 <body class="viewonly">
@@ -861,7 +895,7 @@ html,body{overflow-x:clip}
     </div>
   </div>
 </header>
-<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="trend"><span class="ic">🔥</span><span class="tx">Trending</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="packs"><span class="ic">🎁</span><span class="tx">Packs</span></button></nav>
+<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="trend"><span class="ic">🔥</span><span class="tx">Trending</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="packs"><span class="ic">🎁</span><span class="tx">Packs</span></button><button data-v="best"><span class="ic">🌟</span><span class="tx">Best</span></button></nav>
 
 <main>
   <section class="view on" id="v-collection">
@@ -892,6 +926,7 @@ html,body{overflow-x:clip}
   <section class="view" id="v-stats"></section>
   <section class="view" id="v-box"></section>
   <section class="view" id="v-packs"></section>
+  <section class="view" id="v-best"></section>
   <section class="opview" id="op-collection"></section><section class="opview" id="op-need"></section><section class="opview" id="op-trend"></section>
   <section class="opview" id="op-stats"></section><section class="opview" id="op-completion"></section><section class="opview" id="op-packs"></section>
 
@@ -943,10 +978,10 @@ html,body{overflow-x:clip}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=36"></script>
-<script src="data/my-collection.js?v=36"></script>
-<script src="data/sync.js?v=36"></script>
-<script src="js/binder.js?v=36"></script>
+<script src="data/cards.js?v=37"></script>
+<script src="data/my-collection.js?v=37"></script>
+<script src="data/sync.js?v=37"></script>
+<script src="js/binder.js?v=37"></script>
 <script>
 (() => {
 'use strict';
@@ -1098,6 +1133,7 @@ document.getElementById('gameSw').onclick = e => { const b = e.target.closest('[
 const curView = () => { const on = $('#tabs button.on'); return on ? on.dataset.v : 'collection'; };
 function showView(v, push) {
   if (!$(`#tabs button[data-v="${v}"]`)) v = 'collection';
+  if (GAME === 'op' && v === 'best') v = 'collection';
   scrollMem[curView()] = window.scrollY;
   document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x.dataset.v === v));
   document.querySelectorAll('.view').forEach(el => el.classList.toggle('on', el.id === 'v-' + v));
@@ -1565,15 +1601,16 @@ renderGrid(); placePill(); window.PKX && PKX.start(); if (GAME === 'op') setTime
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=36"></script>
-<script src="data/trending.js?v=36"></script>
-<script src="js/trending.js?v=36"></script>
-<script src="js/packs.js?v=36"></script>
-<script src="js/onepiece.js?v=36"></script>
+<script src="js/extras.js?v=37"></script>
+<script src="data/trending.js?v=37"></script>
+<script src="js/trending.js?v=37"></script>
+<script src="js/packs.js?v=37"></script>
+<script src="js/best.js?v=37"></script>
+<script src="js/onepiece.js?v=37"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=36"></script>
-<script src="js/cloud.js?v=36"></script>
+<script src="data/firebase-config.js?v=37"></script>
+<script src="js/cloud.js?v=37"></script>
 </body>
 </html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open on your phone · Poké Collection</title>
+<link rel="icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#F8F9FA;--card:#FFFFFF;--line:#E5E7EB;--ink:#111827;--ink2:#6B7280;--accent:#4F46E5;--red:#E3350D}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;padding:32px max(16px,env(safe-area-inset-left))}
+.wrap{max-width:940px;margin:0 auto}
+h1{font-size:28px;font-weight:800;margin:0 0 4px;display:flex;align-items:center;gap:12px}
+h1 img{width:40px}
+.sub{color:var(--ink2);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.07);display:flex;flex-direction:column;align-items:center;text-align:center;animation:up .4s ease-out backwards}
+.card:nth-child(2){animation-delay:.08s}
+@keyframes up{from{opacity:0;transform:translateY(12px)}}
+.tag{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);padding:3px 9px;border-radius:99px}
+.card h2{font-size:20px;margin:10px 0 2px}
+.card p{color:var(--ink2);margin:0 0 16px;font-size:14px}
+.qr{padding:14px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.qr img,.qr canvas{display:block;width:220px;height:220px}
+.url{font:600 12px ui-monospace,Consolas,monospace;color:var(--ink2);margin-top:12px;word-break:break-all}
+.steps{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 24px}
+.steps h3{margin:0 0 8px;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+.steps ol{margin:0;padding-left:20px}.steps li{margin:4px 0}
+@media (max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><img src="icons/icon-192.png" alt="">Open Poké Collection on your phone</h1>
+  <p class="sub">Point your phone's camera at a code and tap the link that pops up.</p>
+  <div class="grid">
+    <div class="card" style="--c:#4F46E5"><span class="tag">The app</span><h2>Poké Collection</h2><p>Card pictures, prices, stats and the Box. Add it to your home screen.</p>
+      <div class="qr" id="qrSite"></div><div class="url">blaiseo13.github.io/poke-collection</div></div>
+    <div class="card" style="--c:#E3350D"><span class="tag">Edit</span><h2>Pokédex Binder</h2><p>Scan pages, file cards, rename binders. Opens in claude.ai.</p>
+      <div class="qr" id="qrEdit"></div><div class="url">claude.ai/artifact/WykFENqw79CJXP145FWu3N</div></div>
+  </div>
+  <div class="steps"><h3>Make it an app icon</h3><ol>
+    <li><b>iPhone:</b> open the app code in <b>Safari</b> → tap <b>Share</b> (square with an up arrow, bottom middle) → <b>Add to Home Screen</b> → <b>Add</b>.</li>
+    <li><b>Android:</b> open it in <b>Chrome</b> → tap <b>⋮</b> (top right) → <b>Add to Home screen</b> (or <b>Install app</b>) → <b>Add</b>.</li>
+    <li>Tap the new Poké Ball icon: it opens full screen like an app, with no browser bars.</li>
+  </ol></div>
+</div>
+<script>
+const make = (id, url) => { const el = document.getElementById(id);
+  if (window.QRCode) new QRCode(el, { text: url, width: 220, height: 220, colorDark: '#111827', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  else el.textContent = url; };
+make('qrSite', 'https://blaiseo13.github.io/poke-collection/');
+make('qrEdit', 'https://claude.ai/artifact/WykFENqw79CJXP145FWu3N');
+</script>
+</body>
+</html>

@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Poké Collection</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#F8F9FA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Poké">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -233,6 +241,8 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 #fileBtn.linked{color:var(--green);border-color:#A7F3D0}
 /* view-only dashboard: all edits happen in the Pokédex Binder page (the main record) */
 .viewonly .acts,.viewonly #ripBtn,.viewonly #mineBtn,.viewonly #revBtn,.viewonly #missBtn,.viewonly .boxrow,.viewonly .gotit,.viewonly .boxsearch{display:none!important}
+.phonelink{text-decoration:none;white-space:nowrap}
+@media (max-width:760px){.phonelink{display:none}}
 .editlink{text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
 .pstate{font-size:11px;color:var(--text3);font-weight:600;white-space:nowrap;align-self:center}
 .kpis.six{grid-template-columns:repeat(6,1fr)}
@@ -357,6 +367,7 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
     </div>
     <div class="hbtns">
       <button class="primary" id="ripBtn">🎴 Rip a pack</button>
+      <a class="ghost phonelink" href="open-on-phone.html" target="_blank" rel="noopener" title="QR codes to open this on your phone">📱 Open on phone</a>
       <a class="primary editlink" id="editLink" href="https://claude.ai/artifact/WykFENqw79CJXP145FWu3N" target="_blank" rel="noopener" title="Add, scan, file, rename and box cards in your Pokédex Binder">✏️ Edit binder</a>
     </div>
   </div>
@@ -435,10 +446,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=3"></script>
-<script src="data/my-collection.js?v=3"></script>
-<script src="data/sync.js?v=3"></script>
-<script src="js/binder.js?v=3"></script>
+<script src="data/cards.js?v=4"></script>
+<script src="data/my-collection.js?v=4"></script>
+<script src="data/sync.js?v=4"></script>
+<script src="js/binder.js?v=4"></script>
 <script>
 (() => {
 'use strict';
@@ -860,6 +871,6 @@ window.PKC = { S, SPECIES, CARDS, BY_ID, TIERS, TYPE_C, GENS, ROMAN, WANT, D, sa
 renderGrid(); placePill(); window.PKX && PKX.start(); document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=3"></script>
+<script src="js/extras.js?v=4"></script>
 </body>
 </html>

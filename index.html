@@ -395,6 +395,86 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 .pill.have{background:var(--green)}.pill.need{background:var(--red)}.pill.want{background:var(--amber)}
 .owned .card3d{outline:3px solid color-mix(in srgb,var(--green) 55%,transparent);outline-offset:2px}
 .owned.t4 .card3d,.owned.t5 .card3d{outline:none}
+
+/* ---------- card stat sheet (wheel side panel) ---------- */
+.mbody{grid-template-columns:1fr 360px}
+.info{background:#FAFAFC;padding:16px}
+.sheet{position:relative;overflow:hidden;border-radius:18px;padding:18px 16px 14px;display:grid;gap:12px;
+  background:radial-gradient(120% 70% at 100% 0%,color-mix(in srgb,var(--tc) 22%,#fff) 0%,#fff 60%);
+  border:1px solid color-mix(in srgb,var(--tc) 35%,#E5E7EB);box-shadow:0 10px 30px color-mix(in srgb,var(--tc) 18%,transparent),0 1px 3px rgba(0,0,0,.06);isolation:isolate}
+.sheet::before{content:"";position:absolute;inset:-40%;z-index:-1;pointer-events:none;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.75) 48%,color-mix(in srgb,var(--tc) 25%,transparent) 52%,transparent 60%);
+  animation:sheen 4.5s ease-in-out infinite}
+@keyframes sheen{0%{transform:translateX(-60%)}60%,100%{transform:translateX(60%)}}
+.dexmark{position:absolute;right:-6px;top:-18px;z-index:-1;font:900 96px/1 Inter,system-ui,sans-serif;letter-spacing:-.06em;color:color-mix(in srgb,var(--tc) 13%,transparent);pointer-events:none}
+.cs-top{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.orb{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:22px;
+  background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--tc) 55%,color-mix(in srgb,var(--tc) 70%,#000));
+  box-shadow:0 0 0 3px #fff,0 0 18px color-mix(in srgb,var(--tc) 70%,transparent);animation:orb 2.6s ease-in-out infinite}
+@keyframes orb{50%{box-shadow:0 0 0 3px #fff,0 0 28px color-mix(in srgb,var(--tc) 95%,transparent)}}
+.cs-name{min-width:0}
+.cs-name h3{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.15;text-wrap:balance}
+.cs-sub{font-size:12px;color:var(--text2);font-weight:500;margin-top:2px}
+.hpcorner{text-align:right;line-height:1}
+.hpcorner small{display:block;font:800 10px Inter;letter-spacing:.08em;color:#DC2626}
+.hpcorner b{font:800 26px Inter;color:#111827;letter-spacing:-.03em}
+.own{border-radius:12px;padding:10px 12px;display:grid;gap:2px;font-size:12px}
+.own b{font-size:14px}
+.own span{color:inherit;opacity:.85}
+.own em{font-style:normal;font-weight:800}
+.own.have{background:#ECFDF5;color:#065F46;box-shadow:inset 4px 0 0 var(--green)}
+.own.need{background:#FEF2F2;color:#991B1B;box-shadow:inset 4px 0 0 var(--red)}
+.own.gold{background:linear-gradient(110deg,#FEF3C7,#FDE68A,#FEF3C7);background-size:200% 100%;color:#78350F;box-shadow:inset 4px 0 0 #D97706;animation:goldglide 3s linear infinite}
+@keyframes goldglide{to{background-position:-200% 0}}
+.rarity{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gems{display:flex;gap:6px}
+.gems i{width:13px;height:13px;transform:rotate(45deg);border-radius:3px;background:#E5E7EB}
+.gems i.on{background:var(--gc);box-shadow:0 0 8px color-mix(in srgb,var(--gc) 80%,transparent)}
+.rl{display:grid;line-height:1.2}.rl b{font-size:14px}.rl span{font-size:11px;color:var(--text3)}
+.crown{margin-left:auto;font:700 11px Inter;color:#92400E;background:#FEF3C7;border:1px solid #FDE68A;border-radius:99px;padding:3px 9px}
+.pricehero{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.plab{font:700 10px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.pv{font:800 34px/1.1 Inter;letter-spacing:-.03em;color:var(--green);font-variant-numeric:tabular-nums}
+.pv.none{font-size:16px;color:var(--text3);font-weight:600}
+.pv.skel{height:34px;width:60%;border-radius:8px;background:linear-gradient(90deg,#F3F4F6,#E5E7EB,#F3F4F6);background-size:200% 100%;animation:goldglide 1.2s linear infinite}
+.pmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:11px;color:var(--text3);margin-top:4px}
+.vchip{text-transform:capitalize;font-weight:700;color:var(--text2);background:#F3F4F6;border-radius:99px;padding:2px 8px}
+.sales{display:inline-block;margin-top:8px;font:700 12px Inter;color:#fff;background:var(--text);border-radius:99px;padding:6px 12px;text-decoration:none;transition:transform .15s}
+.sales:hover{transform:translateY(-1px)}
+.stats2{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+.st{background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px;min-width:0}
+.stl{font:700 10px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.stv{font:800 20px Inter;letter-spacing:-.02em}
+.bar2{height:7px;border-radius:99px;background:#F3F4F6;overflow:hidden;margin-top:6px}
+.bar2 i{display:block;height:100%;width:var(--w);border-radius:99px;background:linear-gradient(90deg,color-mix(in srgb,var(--tc) 60%,#fff),var(--tc))}
+.evo{display:flex;align-items:center;gap:4px;margin-top:8px;flex-wrap:wrap}
+.evo span{font:700 10px Inter;color:var(--text3);background:#F3F4F6;border-radius:99px;padding:3px 7px;white-space:nowrap}
+.evo span.past{color:var(--text2);background:color-mix(in srgb,var(--tc) 12%,#F3F4F6)}
+.evo span.on{color:#fff;background:var(--tc);box-shadow:0 0 10px color-mix(in srgb,var(--tc) 60%,transparent)}
+.evo i{width:8px;height:2px;background:#E5E7EB;flex:none}
+.setcard{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.setcard img{max-width:64px;max-height:30px;object-fit:contain}
+.setcard .sn{min-width:0;display:grid}.setcard .sn b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.setcard .sn span{font-size:11px;color:var(--text3)}
+.setcard .no{font:800 18px ui-monospace,Consolas,monospace;letter-spacing:-.02em}.setcard .no small{font-size:11px;color:var(--text3)}
+.artist{font-size:12px;color:var(--text2)}
+.ppos{display:grid;gap:5px;font:600 11px Inter;color:var(--text3)}
+.ptrack{height:4px;background:#E5E7EB;border-radius:99px;overflow:hidden}
+.ptrack i{display:block;height:100%;background:var(--tc);border-radius:99px;transition:width .4s cubic-bezier(.2,.8,.2,1)}
+/* entrance: each section slides in, gems pop, bars fill */
+.sheet.fresh>*:not(.dexmark){animation:csIn .5s cubic-bezier(.2,.9,.3,1) backwards}
+.sheet.fresh>*:nth-child(2){animation-delay:.03s}.sheet.fresh>*:nth-child(3){animation-delay:.08s}.sheet.fresh>*:nth-child(4){animation-delay:.13s}
+.sheet.fresh>*:nth-child(5){animation-delay:.18s}.sheet.fresh>*:nth-child(6){animation-delay:.23s}.sheet.fresh>*:nth-child(7){animation-delay:.28s}
+.sheet.fresh>*:nth-child(8){animation-delay:.33s}.sheet.fresh>*:nth-child(9){animation-delay:.38s}
+@keyframes csIn{from{opacity:0;transform:translateY(12px) scale(.98)}}
+.sheet.fresh .dexmark{animation:dexIn .7s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes dexIn{from{opacity:0;transform:translateX(30px)}}
+.sheet.fresh .gems i.on{animation:gemPop .45s cubic-bezier(.2,1.6,.4,1) backwards;animation-delay:calc(.25s + var(--d))}
+@keyframes gemPop{from{transform:rotate(45deg) scale(0)}}
+.sheet.fresh .bar2 i{animation:barFill .9s cubic-bezier(.2,.8,.2,1) .35s backwards}
+@keyframes barFill{from{width:0}}
+.sheet.fresh .orb{animation:orbIn .6s cubic-bezier(.2,1.6,.4,1) backwards,orb 2.6s ease-in-out .6s infinite}
+@keyframes orbIn{from{transform:scale(0) rotate(-90deg)}}
+@media (max-width:760px){.sheet{padding:14px 12px}.cs-name h3{font-size:18px}.pv{font-size:28px}.dexmark{font-size:72px}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -490,10 +570,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=9"></script>
-<script src="data/my-collection.js?v=9"></script>
-<script src="data/sync.js?v=9"></script>
-<script src="js/binder.js?v=9"></script>
+<script src="data/cards.js?v=10"></script>
+<script src="data/my-collection.js?v=10"></script>
+<script src="data/sync.js?v=10"></script>
+<script src="js/binder.js?v=10"></script>
 <script>
 (() => {
 'use strict';
@@ -816,18 +896,57 @@ function go(i, instant) {
   });
   renderInfo();
 }
+const TYPE_EMOJI = { Grass: '🌿', Fire: '🔥', Water: '💧', Lightning: '⚡', Psychic: '🔮', Fighting: '👊', Darkness: '🌙', Metal: '⚙️', Fairy: '✨', Dragon: '🐉', Colorless: '⭐' };
+const SET_TOTAL = {}; D.sets.forEach(x => SET_TOTAL[x[0]] = x[5] || 0);
+const fmtMoney = v => v >= 1000 ? '$' + Math.round(v).toLocaleString() : '$' + v.toFixed(2);
+function countMoney(el) { const to = +el.dataset.money, t0 = performance.now(); const step = now => { const k = Math.min(1, (now - t0) / 900), e = 1 - Math.pow(1 - k, 3);
+  el.textContent = fmtMoney(to * e); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
 function renderInfo() {
   const c = W.list[W.idx], sp = W.sp, own = ownedOf(sp.dex), mine = own && displayCard(sp) === c;
   if (!c) { $('#info').innerHTML = '<div class="muted">No printings in this form.</div>'; return; }
   const t = TIERS[c.tier];
-  $('#info').innerHTML = `<div class="pos">Printing ${W.idx + 1} of ${W.list.length}</div>
-    <div><div class="k">Card</div><div class="v">${c.name}</div></div>
-    <div><div class="k">Form</div><div class="v"><span class="badge" style="--bc:${t.c};margin:0">${t.l}</span> <span class="muted">${c.rar}</span></div></div>
-    <div><div class="k">Set</div><div class="v">${c.set} · #${c.num}</div><div class="muted">${c.series} · released ${fmtDate(c.date)}</div></div>
-    ${c.artist ? `<div><div class="k">Artist</div><div class="v">${c.artist}</div></div>` : ''}
-    ${c === sp.coolest ? `<div class="badge" style="--bc:#D97706;margin:0">★ Coolest printing</div>` : ''}
-    ${window.PKX ? PKX.infoExtra(c, sp) : ''}
-    <div class="grow"></div>
+  // ----- the stat sheet: themed to the card's energy type, animated when a new card spins to the front -----
+  const fresh = W.lastSheet !== c.id; W.lastSheet = c.id;
+  const tn = D.types[c.type] || 'Colorless', tc = TYPE_C[c.type] || '#A8A29E', emoji = TYPE_EMOJI[tn] || '⭐';
+  const pd = window.PKX && PKX.priceData ? PKX.priceData(c) : { loading: false };
+  const total = SET_TOTAL[c.setId] || 0, hp = c.hp || 0;
+  const ownHtml = mine && own.c ? `<div class="own gold"><b>★ This exact card is in your binder</b></div>`
+    : own ? `<div class="own have"><b>✓ You have ${sp.name}</b><span>${own.c ? 'A different printing' : 'Printing not set'}${c.tier > own.t ? ' · <em>this one would be an upgrade ⬆</em>' : ''}</span></div>`
+    : `<div class="own need"><b>✗ You need this one</b><span>${WANT.has(sp.dex) ? 'On your want list' : 'Not in your binder yet'}</span></div>`;
+  const stages = ['Basic', 'Stage 1', 'Stage 2'];
+  const evo = c.stage === 3 ? `<div class="evo special"><span class="on">Special card</span></div>`
+    : `<div class="evo">${stages.map((s, i) => `<span class="${i === c.stage ? 'on' : i < c.stage ? 'past' : ''}">${s}</span>`).join('<i></i>')}</div>`;
+  $('#info').innerHTML = `<div class="sheet${fresh ? ' fresh' : ''}" style="--tc:${tc};--tier:${t.c}">
+    <div class="dexmark" aria-hidden="true">#${String(sp.dex).padStart(3, '0')}</div>
+    <div class="cs-top">
+      <span class="orb" title="${tn} type">${emoji}</span>
+      <div class="cs-name"><h3>${c.name}</h3><div class="cs-sub">${tn} type · #${String(sp.dex).padStart(3, '0')} ${sp.name}</div></div>
+      <div class="hpcorner"><small>HP</small><b>${hp || '–'}</b></div>
+    </div>
+    ${ownHtml}
+    <div class="rarity">
+      <div class="gems" aria-label="Form ${c.tier + 1} of 6">${TIERS.map((tt, i) => `<i class="${i <= c.tier ? 'on' : ''}" style="--gc:${tt.c};--d:${i * 70}ms"></i>`).join('')}</div>
+      <div class="rl"><b style="color:${t.c}">${t.l}</b><span>${c.rar}</span></div>
+      ${c === sp.coolest ? '<span class="crown">👑 Coolest printing</span>' : ''}
+    </div>
+    <div class="pricehero">${pd.v != null
+      ? `<div class="plab">Market price</div><div class="pv" data-money="${pd.v}">${fmtMoney(pd.v)}</div>
+         <div class="pmeta"><span class="vchip">${pd.variant}</span><span>TCGplayer · as of ${pd.asOf}</span></div>
+         ${pd.url ? `<a class="sales" href="${pd.url}" target="_blank" rel="noopener">See recent sales ↗</a>` : ''}`
+      : pd.loading ? '<div class="plab">Market price</div><div class="pv skel"></div>' : '<div class="plab">Market price</div><div class="pv none">No price listed</div>'}</div>
+    <div class="stats2">
+      <div class="st"><div class="stl">HP</div><div class="stv">${hp || '–'}</div><div class="bar2"><i style="--w:${Math.min(100, hp / 340 * 100)}%"></i></div></div>
+      <div class="st"><div class="stl">Evolution</div>${evo}</div>
+    </div>
+    <div class="setcard">
+      <img src="https://images.pokemontcg.io/${c.setId}/logo.png" alt="" loading="lazy" onerror="this.remove()">
+      <div class="sn"><b>${c.set}</b><span>${c.series} · ${fmtDate(c.date)}</span></div>
+      <div class="no">#${c.num}${total ? `<small>/${total}</small>` : ''}</div>
+    </div>
+    ${c.artist ? `<div class="artist">🎨 Illustrated by <b>${c.artist}</b></div>` : ''}
+    <div class="ppos"><span>Printing ${W.idx + 1} of ${W.list.length}</span><div class="ptrack"><i style="width:${(W.idx + 1) / W.list.length * 100}%"></i></div></div>
+  </div>
+  <div class="grow"></div>
     ${mine && own.c ? `<button class="ghost" disabled>★ In your binder</button>` : `<button class="primary" id="mineBtn">${own ? 'This one is in my binder' : 'Put in my binder'}</button>`}
     ${c.tier <= 1 && own ? `<button class="ghost" id="revBtn">${own.t === 1 && mine ? 'Not reverse holo' : 'Mine is reverse holo'}</button>` : ''}
     ${window.PKX ? PKX.infoBox(c, sp) : ''}
@@ -842,6 +961,7 @@ function renderInfo() {
     logMove(sp.dex, on ? 'set to Reverse Holo' : 'set to Basic', on ? 1 : 0); save(); toast(`${sp.name} ${on ? 'is a Reverse Holo' : 'set to Basic'}`, TIERS[on ? 1 : 0].c); afterChange(); });
   $('#missBtn') && ($('#missBtn').onclick = () => { delete S.owned[sp.dex]; S.removed[sp.dex] = 1; delete S.toFile[sp.dex]; logMove(sp.dex, 'marked missing', -1); save(); toast(`${sp.name} marked missing`, '#DC2626'); afterChange(); });
   window.PKX && PKX.bindInfo(c, sp);
+  if (fresh) { const pv = $('#info .pv[data-money]'); pv && countMoney(pv); }
 }
 function afterChange() { const o = ownedOf(W.sp.dex), b = $('#mBadge'); b.textContent = o ? TIERS[o.t].l : 'Missing'; b.style.setProperty('--bc', o ? TIERS[o.t].c : 'var(--red)');
   go(W.idx); refreshTile(W.sp.dex, 'color'); renderKpis(); }
@@ -936,6 +1056,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=9"></script>
+<script src="js/extras.js?v=10"></script>
 </body>
 </html>

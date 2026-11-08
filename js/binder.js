@@ -172,6 +172,8 @@ const PKX = window.PKX = {
     return `<div><div class="k">Market price</div>${pr ? `<div class="v price">${money(pr.v)} <span class="muted">${pr.k.replace(/-/g, ' ')}</span></div><div class="muted">TCGplayer, as of ${usDate(pr.u)}${pr.url ? ` · <a href="${pr.url}" target="_blank" rel="noopener">see sales</a>` : ''}</div>` : `<div class="v muted">${known(c) ? 'No price listed' : 'Loading…'}</div>`}</div>
       <div class="statline"><span>HP <b>${c.hp || '–'}</b></span><span>${['Basic', 'Stage 1', 'Stage 2', 'Special'][c.stage] || ''}</span></div>`;
   },
+  priceData(c) { if (!known(c)) fetchPrices([c], () => K().wheelRefresh()); const pr = priceFor(c, c.tier);
+    return pr ? { v: pr.v, variant: pr.k.replace(/-/g, ' '), asOf: usDate(pr.u), url: pr.url } : { loading: !known(c) }; },
   infoBox(c, sp) {
     const n = K().S.box.filter(b => b.id === c.id).length;
     return `<div class="boxrow"><button class="ghost" id="boxAdd">📦 + Downstairs box</button>${n ? `<button class="ghost" id="boxDel" title="Remove one from the box">− ${n}</button>` : ''}</div>`;

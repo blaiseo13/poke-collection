@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
-<script>(function(){var h=location.hash;if(h.indexOf("#edit-")===0){try{localStorage.setItem("pkc.editKey",h.slice(6))}catch(e){}history.replaceState(null,"",location.pathname+location.search)}})();</script>
+<script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -748,10 +748,10 @@ body.quick .quickbar{display:flex}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=19"></script>
-<script src="data/my-collection.js?v=19"></script>
-<script src="data/sync.js?v=19"></script>
-<script src="js/binder.js?v=19"></script>
+<script src="data/cards.js?v=20"></script>
+<script src="data/my-collection.js?v=20"></script>
+<script src="data/sync.js?v=20"></script>
+<script src="js/binder.js?v=20"></script>
 <script>
 (() => {
 'use strict';
@@ -1331,13 +1331,13 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=19"></script>
-<script src="data/trending.js?v=19"></script>
-<script src="js/trending.js?v=19"></script>
+<script src="js/extras.js?v=20"></script>
+<script src="data/trending.js?v=20"></script>
+<script src="js/trending.js?v=20"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=19"></script>
-<script src="js/cloud.js?v=19"></script>
+<script src="data/firebase-config.js?v=20"></script>
+<script src="js/cloud.js?v=20"></script>
 </body>
 </html>

@@ -586,6 +586,45 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
   .mtiers .chip,.chips .chip{white-space:nowrap;flex:none}
 }
 @keyframes sheetUp{from{transform:translateY(100%)}}
+
+/* ---------- Trending tab ---------- */
+.trhead{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}.trhead h2{margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.movers{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mvlist{display:grid;gap:4px}
+.mv{display:grid;grid-template-columns:22px 40px 1fr auto;gap:10px;align-items:center;text-align:left;border:0;background:none;padding:6px 6px;border-radius:10px;font:inherit;color:inherit;cursor:pointer}
+.mv:hover{background:#F3F4F6}
+.mvr{font:800 12px Inter;color:var(--text3);text-align:center}
+.mv img{width:40px;aspect-ratio:245/342;object-fit:cover;border-radius:4px;background:#EEF0F3;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.mvn{min-width:0;display:grid}.mvn b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mvn small{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mvp{display:grid;justify-items:end;gap:2px}.mvp b{font-size:14px;font-variant-numeric:tabular-nums}
+.tr{font:800 11px Inter;border-radius:99px;padding:2px 7px;white-space:nowrap}
+.tr.up{color:#065F46;background:#D1FAE5}.tr.down{color:#991B1B;background:#FEE2E2}.tr.flat{color:var(--text3);background:#F3F4F6}
+.setpick{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 10px;scrollbar-width:none;margin-bottom:6px}
+.setpick::-webkit-scrollbar{display:none}
+.sp{flex:none;display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:12px;padding:7px 12px;font:600 13px Inter;color:var(--text2);text-align:left;transition:all .15s}
+.sp img{height:24px;max-width:60px;object-fit:contain}
+.sp span{display:grid;line-height:1.15}.sp small{font-size:10px;color:var(--text3);font-weight:500}
+.sp.on{border-color:var(--accent);background:#EEF2FF;color:var(--accent);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.chhead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:12px}.chhead b{font-size:18px}
+.chgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.ch{position:relative;display:grid;gap:6px;cursor:pointer;border-radius:12px;padding:8px;transition:transform .15s,background .15s}
+.ch:hover{background:#F9FAFB;transform:translateY(-2px)}
+.ch .rank{position:absolute;left:2px;top:2px;z-index:2;font:800 11px Inter;background:var(--text);color:#fff;border-radius:99px;padding:3px 8px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.ch.top3 .rank{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.chimg{aspect-ratio:245/342;border-radius:9px;overflow:hidden;background:#EEF0F3;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.ch.top3 .chimg{box-shadow:0 0 0 2px #F5C04A,0 6px 16px rgba(217,119,6,.3)}
+.chimg img{width:100%;height:100%;object-fit:cover;display:block}
+.chimg{position:relative}.chimg .phn{display:none}
+.chimg.ph .phn{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:4px;padding:10px;text-align:center;background:linear-gradient(160deg,#EEF2FF,#FDF2F8);border:2px dashed #C7D2FE;border-radius:9px}
+.chimg.ph .phn img{width:75%;height:auto;object-fit:contain;filter:drop-shadow(0 4px 6px rgba(0,0,0,.15))}
+.chimg.ph .phn b{font-size:12px}.chimg.ph .phn small{font-size:10px;color:var(--text3)}
+.chn{display:grid;min-width:0}.chn b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chn small{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:capitalize}
+.chp{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.chp b{font-size:17px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.chs .pill{font-size:9px}
+.trnote{margin-top:14px}
+/* card number up top in the details sheet */
+.cardno{display:inline-block;font:800 12px ui-monospace,Consolas,monospace;color:#fff;background:var(--text);border-radius:6px;padding:2px 7px;margin-top:4px;letter-spacing:.02em}
+@media (max-width:760px){.movers{grid-template-columns:1fr}.chgrid{grid-template-columns:repeat(2,1fr);gap:10px}.ch{padding:4px}}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -606,7 +645,7 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
     </div>
   </div>
 </header>
-<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="box"><span class="ic">📦</span><span class="tx">Box</span></button></nav>
+<nav class="tabs glass" id="tabs" aria-label="Sections"><div class="pill"></div><button data-v="collection" class="on"><span class="ic">🗂️</span><span class="tx">Collection</span></button><button data-v="need"><span class="ic">🎯</span><span class="tx">Need</span></button><button data-v="trend"><span class="ic">🔥</span><span class="tx">Trending</span></button><button data-v="stats"><span class="ic">📊</span><span class="tx">Stats</span></button><button data-v="completion"><span class="ic">🏆</span><span class="tx">Complete</span></button><button data-v="box"><span class="ic">📦</span><span class="tx">Box</span></button></nav>
 
 <main>
   <section class="view on" id="v-collection">
@@ -631,6 +670,7 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
   </section>
 
   <section class="view" id="v-need"></section>
+  <section class="view" id="v-trend"></section>
   <section class="view" id="v-stats"></section>
   <section class="view" id="v-box"></section>
 
@@ -681,10 +721,10 @@ main{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));padding-left:m
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=15"></script>
-<script src="data/my-collection.js?v=15"></script>
-<script src="data/sync.js?v=15"></script>
-<script src="js/binder.js?v=15"></script>
+<script src="data/cards.js?v=17"></script>
+<script src="data/my-collection.js?v=17"></script>
+<script src="data/sync.js?v=17"></script>
+<script src="js/binder.js?v=17"></script>
 <script>
 (() => {
 'use strict';
@@ -1056,7 +1096,7 @@ function renderInfo() {
     <div class="dexmark" aria-hidden="true">#${String(sp.dex).padStart(3, '0')}</div>
     <div class="cs-top">
       <span class="orb" title="${tn} type">${emoji}</span>
-      <div class="cs-name"><h3>${c.name}</h3><div class="cs-sub">${tn} type · #${String(sp.dex).padStart(3, '0')} ${sp.name}</div></div>
+      <div class="cs-name"><h3>${c.name}</h3><div class="cs-sub">${c.set} · ${tn} type</div><span class="cardno">#${c.num}${total ? '/' + total : ''}</span></div>
       <div class="hpcorner"><small>HP</small><b>${hp || '–'}</b></div>
     </div>
     ${ownHtml}
@@ -1221,6 +1261,8 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=15"></script>
+<script src="js/extras.js?v=17"></script>
+<script src="data/trending.js?v=17"></script>
+<script src="js/trending.js?v=17"></script>
 </body>
 </html>

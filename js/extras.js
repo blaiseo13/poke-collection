@@ -22,7 +22,7 @@ function needShell() {
     <div class="filters"><div class="chips" id="needChips"></div><span class="count" id="needCount"></span></div>
     <div class="needgrid" id="needGrid"></div>`;
   const q = $('#needQ'); let t;
-  q.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { NEED.q = q.value.trim().toLowerCase(); updateNeed(); }, 120); });
+  q.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { NEED.q = q.value.trim().toLowerCase(); NEED.limit = 120; updateNeed(); }, 120); });
   root.addEventListener('click', e => {
     const k = K(), g = e.target.closest('[data-g]'), v = e.target.closest('[data-v]'), got = e.target.closest('[data-got]'), op = e.target.closest('[data-open]');
     if (got) { const dex = +got.dataset.got, sp = k.SPECIES[dex - 1], S = k.S;
@@ -31,7 +31,8 @@ function needShell() {
       const c = got.closest('.needc'); c && c.classList.add('caught'); setTimeout(() => { updateNeed(); k.renderGrid(); }, 480); return; }
     if (op) { k.openWheel(k.SPECIES[op.dataset.open - 1]); return; }
     if (g) { NEED.gen = +g.dataset.g === NEED.gen ? -1 : +g.dataset.g; updateNeed(); return; }
-    if (v) { NEED.only = v.dataset.v; updateNeed(); }
+    if (v) { NEED.only = v.dataset.v; updateNeed(); return; }
+    if (e.target.closest('[data-more]')) { NEED.limit += 120; updateNeed(); }
   });
   NEED.built = true;
 }
@@ -76,12 +77,13 @@ function updateNeed() {
       <div class="needgens">${k.GENS.map((g, i) => `<button class="ng${NEED.gen === i ? ' on' : ''}" data-g="${i}" data-tip="Gen ${k.ROMAN[i]} · ${g[2]}: ${byGen[i]} needed"><b>${byGen[i]}</b><span>Gen ${k.ROMAN[i]}</span><i style="--h:${byGen[i] / (g[1] - g[0] + 1) * 100}%"></i></button>`).join('')}</div></div>`;
   $('#needChips').innerHTML = [['all', 'Everything I need'], ['want', 'Want list only']].map(([v, l]) => `<button class="chip${NEED.only === v ? ' on' : ''}" data-v="${v}">${l}</button>`).join('') + `<button class="chip${NEED.gen < 0 ? ' on' : ''}" data-g="-1">All gens</button>`;
   $('#needCount').textContent = `${list.length} shown`;
-  const shown = isCardNo ? [] : list;
+  const small = matchMedia('(max-width:760px),(hover:none)').matches;
+  NEED.limit = NEED.limit || 120; const all2 = isCardNo ? [] : list, shown = small ? all2.slice(0, NEED.limit) : all2;
   $('#needGrid').innerHTML = shown.length ? shown.map(sp => `<div class="needc${k.WANT.has(sp.dex) ? ' w' : ''}" data-dex="${sp.dex}">
       <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${sp.basic.img}" alt="" data-open="${sp.dex}">
       <div class="nn"><b>${sp.name}</b><span>#${pad(sp.dex)}</span></div>
       <div class="muted small">${esc(sp.basic.set)} #${sp.basic.num}</div>
-      <button class="gotit" data-got="${sp.dex}">✓ Got it</button></div>`).join('')
+      <button class="gotit" data-got="${sp.dex}">✓ Got it</button></div>`).join('') + (shown.length < all2.length ? `<button class="ghost needmore" data-more="1">Show more (${all2.length - shown.length} to go)</button>` : '')
     : isCardNo ? '' : `<div class="empty">${NEED.q ? 'You don’t need any Pokémon matching that. See the answer above.' : 'Nothing needed here. Caught them all!'}</div>`;
 }
 function renderNeed() { updateNeed(); }

@@ -490,6 +490,16 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
   .sheet::before{animation:none;opacity:.5}
   header{backdrop-filter:none;background:var(--bg)}
 }
+
+/* phones: no pop-in on 1,025 cards at once (each animating card becomes its own layer and iPhone Safari runs out of memory) */
+@media (hover:none),(max-width:760px){
+  .tile,.kpi,.needc,.view.on{animation:none!important}
+  .tile{content-visibility:visible}
+}
+.more{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px;padding:24px;color:var(--text3);font-weight:600;font-size:13px}
+.more .spin{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.needmore{grid-column:1/-1;justify-self:center;margin:10px 0}
 @media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.comp-top,.two{grid-template-columns:1fr}.mbody{grid-template-columns:1fr;grid-template-rows:1fr auto}.info{border-left:0;border-top:1px solid var(--border)}}
 @media (max-width:560px){.hwrap,main{padding-left:16px;padding-right:16px}.grid{grid-template-columns:repeat(2,1fr)}.genrow{grid-template-columns:90px 1fr 70px}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -585,10 +595,10 @@ select{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--border
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=12"></script>
-<script src="data/my-collection.js?v=12"></script>
-<script src="data/sync.js?v=12"></script>
-<script src="js/binder.js?v=12"></script>
+<script src="data/cards.js?v=13"></script>
+<script src="data/my-collection.js?v=13"></script>
+<script src="data/sync.js?v=13"></script>
+<script src="js/binder.js?v=13"></script>
 <script>
 (() => {
 'use strict';
@@ -816,17 +826,32 @@ function renderGrid() {
   const list = filtered(), g = $('#grid');
   $('#count').textContent = `${list.length.toLocaleString()} shown`;
   if (!list.length) { g.innerHTML = `<div class="empty"><div class="ball"></div>No Pokémon match. Try another name or number.</div>`; return; }
-  let html = '', lastGen = -2, idx = 0;
-  const showHeads = UI.sort === 'dex' && !UI.q;
+  const parts = [], showHeads = UI.sort === 'dex' && !UI.q; let lastGen = -2, idx = 0;
   list.forEach(sp => {
     if (showHeads && sp.gen !== lastGen) { lastGen = sp.gen; const gg = GENS[sp.gen];
       const own = SPECIES.filter(x => x.gen === sp.gen && ownedOf(x.dex)).length, tot = gg[1] - gg[0] + 1;
-      html += `<div class="gen-h" data-g="${sp.gen}"><b>Gen ${ROMAN[sp.gen]} · ${gg[2]}</b> ${own}/${tot}</div>`; }
-    html += tileHTML(sp, idx++);
+      parts.push({ head: true, sp, html: `<div class="gen-h" data-g="${sp.gen}"><b>Gen ${ROMAN[sp.gen]} · ${gg[2]}</b> ${own}/${tot}</div>` }); }
+    parts.push({ sp, i: idx++ });
   });
-  g.classList.toggle('noanim', !!g.dataset.painted); g.dataset.painted = 1;
-  g.innerHTML = html;
+  g.classList.toggle('noanim', !!g.dataset.painted || SMALL()); g.dataset.painted = 1;
+  if (GRID.io) GRID.io.disconnect();
+  GRID.parts = parts; GRID.at = 0; g.innerHTML = '';
+  appendGrid(SMALL() ? 120 : parts.length);
   renderKpis();
+}
+// on phones the grid is added in batches of 120 as you scroll; on computers it's all drawn at once
+const SMALL = () => matchMedia('(max-width:760px),(hover:none)').matches;
+const GRID = { parts: [], at: 0, io: null };
+function appendGrid(n) {
+  const g = $('#grid'), end = Math.min(GRID.parts.length, GRID.at + n);
+  const html = GRID.parts.slice(GRID.at, end).map(p => p.head ? p.html : tileHTML(p.sp, p.i)).join('');
+  GRID.at = end; const old = g.querySelector('.more'); if (old) old.remove();
+  g.insertAdjacentHTML('beforeend', html);
+  if (GRID.at < GRID.parts.length) {
+    g.insertAdjacentHTML('beforeend', `<div class="more"><span class="spin"></span>Loading more… ${GRID.parts.length - GRID.at} to go</div>`);
+    GRID.io = GRID.io || new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) appendGrid(120); }, { rootMargin: '1200px 0px' });
+    GRID.io.disconnect(); GRID.io.observe(g.querySelector('.more'));
+  }
 }
 function refreshTile(dex, fx) {
   const el = document.querySelector(`.tile[data-dex="${dex}"]`); if (!el) return;
@@ -1079,6 +1104,6 @@ renderGrid(); placePill(); window.PKX && PKX.start();
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/extras.js?v=12"></script>
+<script src="js/extras.js?v=13"></script>
 </body>
 </html>

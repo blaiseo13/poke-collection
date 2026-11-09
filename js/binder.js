@@ -169,7 +169,7 @@ const PKX = window.PKX = {
   infoExtra(c, sp) {
     const pr = priceFor(c, c.tier);
     if (!known(c)) fetchPrices([c], () => K().wheelRefresh());
-    return `<div><div class="k">Market price</div>${pr ? `<div class="v price">${money(pr.v)} <span class="muted">${pr.k.replace(/-/g, ' ')}</span></div><div class="muted">TCGplayer, as of ${usDate(pr.u)}${pr.url ? ` · <a href="${pr.url}" target="_blank" rel="noopener">see sales</a>` : ''}</div>` : `<div class="v muted">${known(c) ? 'No price listed' : 'Loading…'}</div>`}</div>
+    return `<div><div class="k">Raw · ungraded</div>${pr ? `<div class="v price">${money(pr.v)} <span class="muted">${pr.k.replace(/-/g, ' ')}</span></div><div class="muted">TCGplayer, as of ${usDate(pr.u)}${pr.url ? ` · <a href="${pr.url}" target="_blank" rel="noopener">see sales</a>` : ''}</div>` : `<div class="v muted">${known(c) ? 'No price listed' : 'Loading…'}</div>`}</div>
       <div class="statline"><span>HP <b>${c.hp || '–'}</b></span><span>${['Basic', 'Stage 1', 'Stage 2', 'Special'][c.stage] || ''}</span></div>`;
   },
   priceValue(c, tier) { const pr = priceFor(c, tier); return pr ? pr.v : 0; },

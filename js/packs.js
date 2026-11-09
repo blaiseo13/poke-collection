@@ -112,12 +112,13 @@ function openCard(c) {
     <div class="lbcard h${c.hit}">${c.img ? `<img src="${c.img}/high.webp" alt="${esc(c.n)}" onerror="if(!this.dataset.f){this.dataset.f=1;this.src='${c.img}/low.webp'}else{this.parentNode.insertAdjacentHTML('afterbegin','<div class=lbph>Picture coming soon</div>');this.remove()}">` : '<div class="lbph">Picture coming soon</div>'}<span class="lbshine"></span></div>
     <div class="lbinfo"><h2>${esc(c.n)}</h2><div class="muted">${esc(c.set)} · #${esc(c.num)}</div>
       <div class="lbr"><span class="rpill" style="background:${HIT_C[c.hit] || '#6B7280'}">${esc(c.r) || 'Unknown rarity'}</span>${status(c)}</div>
-      <div class="lbp"><small>Market price</small><b>${money(c.usd)}</b>${pct(c.t)}</div>
+      <div class="lbp"><small>Raw · ungraded</small><b>${money(c.usd)}</b>${pct(c.t)}</div>
       <span class="ptschip" style="justify-self:start">⭐ ${ptsOf(c, c.date)} pts</span>
       <div class="lbchart"><div class="chead"><small>Price history</small><span class="cchg"></span></div>
         <div class="rng">${[['1w', '1W'], ['1m', '1M'], ['ytd', 'YTD'], ['1y', '1Y'], ['all', 'All']].map(([r, l]) => `<button data-r="${r}" class="${r === '1y' ? 'on' : ''}">${l}</button>`).join('')}</div>
         <div class="cbody"><span class="spin"></span></div></div>
       ${(() => { const ours = k.CARDS.find(x => x.tdId === c.id); return ours ? `<a class="sales alt" style="margin:0;text-align:center" href="https://www.pokeprice.gg/cards/${String(ours.id).replace(/~\d+$/, '')}" target="_blank" rel="noopener">eBay sold &amp; graded prices on pokeprice.gg ↗</a>` : ''; })()}
+      <a class="sales alt" style="margin:0;text-align:center" href="https://www.pricecharting.com/search-products?type=prices&q=${encodeURIComponent((c.n || '') + ' ' + (c.set || '') + ' ' + (c.num || ''))}" target="_blank" rel="noopener">PSA 10 price ↗</a>
       ${sp ? `<button class="primary lbw" data-dex="${c.dex}">See every ${esc(sp.name)} printing →</button>` : ''}</div></div>`;
   lb.classList.add('on'); document.body.style.overflow = 'hidden';
   if (!(history.state && history.state.lb)) { history.pushState(Object.assign({}, history.state, { lb: 1 }), '', location.href); LB.pushed = true; }

@@ -129,7 +129,7 @@ function openCard(c) {
       <div class="lbinfo"><h2>${esc(c.n)}</h2><div class="muted">${esc(c.set.name)} · ${esc(c.num)}${c.v ? ' · ' + esc(c.v) : ''}</div>
         <div class="lbr"><span class="rpill" style="background:${hc}">${esc(RARITY_NAME[c.r] || c.r)}</span>${statusPill(c)}<span class="ptschip">⭐ ${pts(c)} pts</span></div>
         <div class="opmeta">${[c.type, c.color, c.cost ? 'Cost ' + c.cost : '', c.power ? c.power.toLocaleString() + ' power' : '', c.traits].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join('')}</div>
-        <div class="lbp"><small>Market price</small><b>${money(c.usd)}</b></div>
+        <div class="lbp"><small>Raw · ungraded</small><b>${money(c.usd)}</b></div>
         <div class="lbchart"><div class="chead"><small>Price history</small><span class="cchg"></span></div>
           <div class="rng">${[['1w', '1W'], ['1m', '1M'], ['ytd', 'YTD'], ['1y', '1Y'], ['all', 'All']].map(([r, l]) => `<button data-r="${r}" class="${r === '1y' ? 'on' : ''}">${l}</button>`).join('')}</div>
           <div class="cbody"><span class="spin"></span></div></div>

@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Poké Collection</title>
-<script id="stayfresh">/* stay fresh: reload when a newer build is on the site */(function(){var V='40';function chk(){try{fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();if(!t||t===V)return;var u=new URL(location.href);if(u.searchParams.get('v')===t)return;u.searchParams.set('v',t);location.replace(u.toString())}).catch(function(){})}catch(e){}}chk();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')chk()});setInterval(chk,300000)})();</script>
+<script id="stayfresh">/* stay fresh: reload when a newer build is on the site */(function(){var V='41';function chk(){try{fetch('version.txt?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){t=(t||'').trim();if(!t||t===V)return;var u=new URL(location.href);if(u.searchParams.get('v')===t)return;u.searchParams.set('v',t);location.replace(u.toString())}).catch(function(){})}catch(e){}}chk();document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')chk()});setInterval(chk,300000)})();</script>
 <script>/* private edit link: #edit-KEY or ?edit=KEY. Keep it in the address as ?edit= so "Add to Home Screen" (own storage on iPhone) carries it */(function(){var h=location.hash,k=null,q=new URLSearchParams(location.search);if(h.indexOf("#edit-")===0)k=h.slice(6);else if(q.get("edit"))k=q.get("edit");if(k){try{localStorage.setItem("pkc.editKey",k)}catch(e){}if(h.indexOf("#edit-")===0)history.replaceState(null,"",location.pathname+"?edit="+encodeURIComponent(k))}})();</script>
-<link rel="manifest" href="manifest.webmanifest?v=40">
-<link rel="icon" href="icons/favicon-64.png?v=40" type="image/png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=40">
+<link rel="manifest" href="manifest.webmanifest?v=41">
+<link rel="icon" href="icons/favicon-64.png?v=41" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=41">
 <meta name="theme-color" content="#F8F9FA">
 <meta http-equiv="Cache-Control" content="no-cache">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -878,6 +878,8 @@ body.game-op #tabs button[data-v="best"]{display:none}
 .gbtn{border:1px solid #FCD34D;background:#FFFBEB;color:#92400E;border-radius:8px;padding:8px;font-weight:800;cursor:pointer;min-height:40px}.gbtn.on{background:#F59E0B;color:#fff;border-color:#F59E0B}
 #lzoom{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:400;padding:16px}#lzoom.on{display:flex}#lzoom img{max-width:100%;max-height:92vh;border-radius:14px}
 @media (max-width:760px){.lsheet{padding:0;align-items:flex-end}.lin{border-radius:14px 14px 0 0;max-height:90vh}.rung{flex-basis:72%}.nimg{width:52px}.nimg.sm{width:36px}}
+
+.np::after{content:' raw';font-size:.72em;color:var(--text3);font-weight:500}
 </style>
 </head>
 <body class="viewonly">
@@ -1009,10 +1011,10 @@ body.game-op #tabs button[data-v="best"]{display:none}
 <canvas id="fx"></canvas>
 <div class="asof"><span id="priceState"></span> <span id="asof"></span></div>
 
-<script src="data/cards.js?v=40"></script>
-<script src="data/my-collection.js?v=40"></script>
-<script src="data/sync.js?v=40"></script>
-<script src="js/binder.js?v=40"></script>
+<script src="data/cards.js?v=41"></script>
+<script src="data/my-collection.js?v=41"></script>
+<script src="data/sync.js?v=41"></script>
+<script src="js/binder.js?v=41"></script>
 <script>
 (() => {
 'use strict';
@@ -1452,10 +1454,10 @@ function renderInfo() {
       ${c === sp.coolest ? '<span class="crown">👑 Coolest printing</span>' : ''}
     </div>
     <div class="pricehero">${pd.v != null
-      ? `<div class="plab">Market price</div><div class="pv" data-money="${pd.v}">${fmtMoney(pd.v)}</div>
+      ? `<div class="plab">Raw · ungraded</div><div class="pv" data-money="${pd.v}">${fmtMoney(pd.v)}</div>
          <div class="pmeta"><span class="vchip">${pd.variant}</span><span>TCGplayer · as of ${pd.asOf}</span></div>
-         ${pd.url ? `<a class="sales" href="${pd.url}" target="_blank" rel="noopener">See recent sales ↗</a>` : ''}<a class="sales alt" href="https://www.pokeprice.gg/cards/${String(c.id).replace(/~\d+$/, '')}" target="_blank" rel="noopener">pokeprice.gg ↗</a>`
-      : pd.loading ? '<div class="plab">Market price</div><div class="pv skel"></div>' : '<div class="plab">Market price</div><div class="pv none">No price listed</div>'}</div>
+         ${pd.url ? `<a class="sales" href="${pd.url}" target="_blank" rel="noopener">See recent sales ↗</a>` : ''}<a class="sales alt" href="https://www.pokeprice.gg/cards/${String(c.id).replace(/~\d+$/, '')}" target="_blank" rel="noopener">pokeprice.gg ↗</a><a class="sales alt" href="https://www.pricecharting.com/search-products?type=prices&q=${encodeURIComponent((c.name || '') + ' ' + (c.set || '') + ' ' + (c.num || ''))}" target="_blank" rel="noopener">PSA 10 ↗</a>`
+      : pd.loading ? '<div class="plab">Raw · ungraded</div><div class="pv skel"></div>' : '<div class="plab">Raw · ungraded</div><div class="pv none">No price listed</div>'}</div>
     <div class="stats2">
       <div class="st"><div class="stl">HP</div><div class="stv">${hp || '–'}</div><div class="bar2"><i style="--w:${Math.min(100, hp / 340 * 100)}%"></i></div></div>
       <div class="st"><div class="stl">Evolution</div>${evo}</div>
@@ -1635,18 +1637,18 @@ renderGrid(); placePill(); window.PKX && PKX.start(); if (GAME === 'op') setTime
  document.fonts && document.fonts.ready.then(placePill);
 })();
 </script>
-<script src="js/ladder.js?v=40"></script>
-<script src="js/sets.js?v=40"></script>
-<script src="js/extras.js?v=40"></script>
-<script src="data/trending.js?v=40"></script>
-<script src="js/trending.js?v=40"></script>
-<script src="js/packs.js?v=40"></script>
-<script src="js/best.js?v=40"></script>
-<script src="js/onepiece.js?v=40"></script>
+<script src="js/ladder.js?v=41"></script>
+<script src="js/sets.js?v=41"></script>
+<script src="js/extras.js?v=41"></script>
+<script src="data/trending.js?v=41"></script>
+<script src="js/trending.js?v=41"></script>
+<script src="js/packs.js?v=41"></script>
+<script src="js/best.js?v=41"></script>
+<script src="js/onepiece.js?v=41"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="data/firebase-config.js?v=40"></script>
-<script src="js/cloud.js?v=40"></script>
+<script src="data/firebase-config.js?v=41"></script>
+<script src="js/cloud.js?v=41"></script>
 </body>
 </html>
